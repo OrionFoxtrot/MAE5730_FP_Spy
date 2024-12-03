@@ -4,20 +4,6 @@
 % thetas = [0 0 0]; %theta's of each pendulum with repsect to vertical
 ds = [5 5 5]; % d's of pendulums. Get 3.
 
-% t1 = ones(20,1);
-% t2 = zeros(20,1);
-% t3 = ones(20,1);
-% 
-% t1 = gibb(20,0);
-% t2 = gibb(20,1);
-% t3 = gibb(20,2);
-% 
-% xg_0 = zeros(20,1);
-% yg_0 = zeros(20,1);
-% 
-% xg_0 = linspace(0,5,20)
-% yg_0 = linspace(0,-2,20)
-
 %using X0's unpack
 xg_0 = X(:,1);
 yg_0 = X(:,2);

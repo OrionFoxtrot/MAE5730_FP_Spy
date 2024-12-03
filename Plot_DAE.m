@@ -11,7 +11,7 @@ yg_0 = X(:,2);
 %overlay stuff
 l = length(xg_0);
 funx = linspace(min(xg_0),max(xg_0));
-funy = funx.^2;
+funy = 2*cos(funx/3);
 
 close all
 hold on

@@ -20,3 +20,7 @@ syms x(t) t
 
 y = x^2;
 pretty(simplify(diff(diff(y,t))))
+
+y = 2*cos(x(t)/3);
+pretty(simplify(diff(diff(y,t))))
+pretty(simplify(diff(y,x)))
