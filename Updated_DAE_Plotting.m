@@ -1,12 +1,18 @@
 %%Plotting
 
 %using X0's unpack
-ds = [5,5,5];
-t1 = X(:,5);
-t2 = X(:,8);
-t3 = X(:,11);
+
 xg_0 = X(:,1);
 yg_0 = X(:,2);
+
+xg_1 = X(:,3);
+yg_1 = X(:,4);
+
+xg_2 = X(:,6);
+yg_2 = X(:,7);
+
+xg_3 = X(:,9);
+yg_3 = X(:,10);
 
 %overlay stuff
 l = length(xg_0);
@@ -23,16 +29,11 @@ ylim([-20 10])
 for i = 1:length(t1)
     xlim([xg_0(i)-10 xg_0(i)+10])
     ylim([yg_0(i)-20 yg_0(i)+10])
+
     h1 = plot(xg_0(i), yg_0(i), 'o','MarkerFaceColor','r',MarkerSize=15, DisplayName='G_0 (Head)');
-
-    CG_1 = get_next_g([xg_0(i), yg_0(i)],ds(1), t1(i));
-    h2 = plot(CG_1(1), CG_1(2), 'o','MarkerFaceColor','b',MarkerSize=10,DisplayName='G_1');
-
-    CG_2 = get_next_g(CG_1,ds(2), t2(i));
-    h3 = plot(CG_2(1), CG_2(2), 'o','MarkerFaceColor','g',MarkerSize=10,DisplayName='G_2');
-
-    CG_3 = get_next_g(CG_2,ds(3), t3(i));
-    h4 = plot(CG_3(1), CG_3(2), 'o','MarkerFaceColor','y',MarkerSize=10,DisplayName='G_3 (Toes)');
+    h2 = plot(xg_1(i), yg_1(i), 'o','MarkerFaceColor','b',MarkerSize=10,DisplayName='G_1');
+    h3 = plot(xg_2(i), yg_2(i), 'o','MarkerFaceColor','g',MarkerSize=10,DisplayName='G_2');
+    h4 = plot(xg_3(i), yg_3(i), 'o','MarkerFaceColor','y',MarkerSize=10,DisplayName='G_3 (Toes)');
 
     h5 = plot( [xg_0(i),CG_1(1)], [yg_0(i),CG_1(2)],'MarkerFaceColor','k');
     h6 = plot( [CG_1(1),CG_2(1)], [CG_1(2),CG_2(2)],'MarkerFaceColor','k');

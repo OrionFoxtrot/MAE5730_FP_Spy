@@ -13,3 +13,10 @@ y3 = y2-d2*cos(theta2(t));
 
 x4 = x3+d3*sin(theta3(t));
 y4 = y3-d3*cos(theta3(t));
+
+%%
+clear; clc;
+syms x(t) t
+
+y = x^2;
+pretty(simplify(diff(diff(y,t))))
