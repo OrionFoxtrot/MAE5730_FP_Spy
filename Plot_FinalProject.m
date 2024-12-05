@@ -17,13 +17,20 @@ axis equal
 xlim([-10 10])
 ylim([-20 10])
 
-funx = linspace(min(xg_0)-5,max(xg_0)+5,1e5);
+% funx = linspace(min(xg_0)-5,max(xg_0)+5,1e5);
 %funy = funx; %y=x
 %funy = (funx-3).^2+1; %y = (x-3)^2+1
-funy = (funx/10-3).^2+1; %y = (x/10-3)^2+1
+% funy = (funx/10-3).^2+1; %y = (x/10-3)^2+1
 %funy = cos(funx);
 %xline(2*pi)
-plot(funx,funy)
+% plot(funx,funy)
+
+funx0 = linspace(0,60,1e3);
+funx1 = linspace(60,100,1e3);
+funy0 = (funx0./10-3).^2+1;
+funy1 = (-1/10*funx1+16);
+plot(funx0,funy0);
+plot(funx1,funy1);
 
 for i = 1:length(t1)
     xlim([xg_0(i)-10 xg_0(i)+10])

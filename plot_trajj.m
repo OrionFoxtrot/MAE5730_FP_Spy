@@ -6,6 +6,7 @@ function traj = plot_trajj(X,method)
         t1 = X(:,3);
         t2 = X(:,4);
         t3 = X(:,5);
+        met = "Euler-Lagrange";
     end
     if method == 2
         t1 = X(:,5);
@@ -13,18 +14,16 @@ function traj = plot_trajj(X,method)
         t3 = X(:,11);
         xg_0 = X(:,1);
         yg_0 = X(:,2);
+        met = "DAE";
     end
     ds = [5 5 5];
     cg1 = [];
     cg2 = [];
     cg3 = [];
     for i = 1:length(t1)
-   
-        plot(xg_0(i), yg_0(i),DisplayName='G_0 (Head)');
-    
+  
         CG_1 = get_next_g([xg_0(i), yg_0(i)],ds(1), t1(i));
         cg1 = [cg1 CG_1];
-     
     
         CG_2 = get_next_g(CG_1,ds(2), t2(i));
         cg2 = [cg2 CG_2];
@@ -33,16 +32,18 @@ function traj = plot_trajj(X,method)
         cg3 = [cg3 CG_3];
      
     end
-    figure
+ 
     hold on
-    plot(xg_0,yg_0,'MarkerFaceColor','r')
-    plot(cg1(1,:), cg1(2,:),'MarkerFaceColor','g')
-    plot(cg2(1,:), cg2(2,:),'MarkerFaceColor','b')
-    plot(cg3(1,:), cg3(2,:),'MarkerFaceColor','y')
-    legend("trolley CG", "Link 1 CG", "Link 2 CG", "Link 3 CG");
-    title("trajectory of Trolley");
+    plot(xg_0,yg_0,'r',DisplayName="Trolley CG")
+    plot(cg1(1,:), cg1(2,:),'g',DisplayName="Link 1 CG")
+    plot(cg2(1,:), cg2(2,:),'b',DisplayName="Link 2 CG")
+    plot(cg3(1,:), cg3(2,:),'k',DisplayName="Link 3 CG")
+    legend()
+    title(sprintf("Trajectory of trolley with %s method",met));
     
     hold off
+    f = gcf;
+    exportgraphics(f,sprintf('Trajectories/%s.png',met),'Resolution',300)
   
 end
 

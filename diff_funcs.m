@@ -68,3 +68,9 @@ y3 = y1(t) - 2*d1*cos(theta1(t)) - d2*cos(theta2(t));
 
 x4 = x1(t) + 2*d1*sin(theta1(t)) + 2*d2*sin(theta2(t)) + d3*sin(theta3(t));
 y4 = y1(t) - 2*d1*cos(theta1(t)) - 2*d2*cos(theta2(t)) - d3*cos(theta3(t));
+
+
+%%
+clear; clc;
+syms c
+vpasolve((-100/10+c)^2+1==6,c)
