@@ -41,7 +41,7 @@ for i = 1:length(t1)
     legend([h1,h2,h3,h4])
     title(sprintf("Index %.2f",i))
     
-    pause(0.05)
+    pause(0.01)
     
     
     if i==length(t1)

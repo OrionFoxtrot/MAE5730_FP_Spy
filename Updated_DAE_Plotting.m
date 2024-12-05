@@ -27,8 +27,9 @@ yg_3 = X(:,10);
 
 %overlay stuff
 l = length(xg_0);
-funx = linspace(min(xg_0),max(xg_0));
-funy = 2*cos(funx/3);
+funx = linspace(min(xg_0)-5,max(xg_0)+5,1e5);
+%funy = 2*cos(funx/3);
+funy = (funx/10-3).^2+1;
 
 close all
 hold on

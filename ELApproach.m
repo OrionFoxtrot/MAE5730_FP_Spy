@@ -19,9 +19,13 @@ Ig3 = 1/12*m4*(2*d3)^2;
 
 vg = sqrt(xg_dot^2+yg_dot^2);
 
-vg2 = sqrt((xg_dot+d1*theta1_dot*cos(theta1))^2 + (yg_dot-d1*theta1_dot*sin(theta1))^2);
-vg3 = sqrt((xg_dot+d1*theta1_dot*cos(theta1)+d2*theta2_dot*cos(theta2))^2 + (yg_dot-d1*theta1_dot*sin(theta1)-d2*theta2_dot*sin(theta2))^2);
-vg4 = sqrt((xg_dot+d1*theta1_dot*cos(theta1)+d2*theta2_dot*cos(theta2)+d3*theta3_dot*cos(theta3))^2 + (yg_dot-d1*theta1_dot*sin(theta1)-d2*theta2_dot*sin(theta2)-d3*theta3_dot*sin(theta3))^2);
+% vg2 = sqrt((xg_dot+d1*theta1_dot*cos(theta1))^2 + (yg_dot-d1*theta1_dot*sin(theta1))^2);
+% vg3 = sqrt((xg_dot+d1*2*theta1_dot*cos(theta1)+d2*theta2_dot*cos(theta2))^2 + (yg_dot-2*d1*theta1_dot*sin(theta1)-d2*theta2_dot*sin(theta2))^2);
+% vg4 = sqrt((xg_dot+d1*theta1_dot*cos(theta1)+d2*theta2_dot*cos(theta2)+d3*theta3_dot*cos(theta3))^2 + (yg_dot-d1*theta1_dot*sin(theta1)-d2*theta2_dot*sin(theta2)-d3*theta3_dot*sin(theta3))^2);
+
+vg2 = sqrt((xg_dot + d1*cos(theta1)*theta1_dot)^2 + (yg_dot + d1*sin(theta1)*theta1_dot)^2);
+vg3 = sqrt((xg_dot + 2*d1*cos(theta1)*theta1_dot + d2*cos(theta2)*theta2_dot)^2 + (yg_dot + 2*d1*sin(theta1)*theta1_dot + d2*sin(theta2)*theta2_dot)^2);
+vg4 = sqrt((xg_dot + 2*d1*cos(theta1)*theta1_dot + 2*d2*cos(theta2)*theta2_dot + d3*cos(theta3)*theta3_dot)^2 + (yg_dot + 2*d1*sin(theta1)*theta1_dot + 2*d2*sin(theta2)*theta2_dot + d3*sin(theta3)*theta3_dot)^2);
 
 % KE = 1/2* ( m1*vg^2 ...
 %     +m2*d1^2*theta1_dot^2+Ig1*d1^2*theta1_dot^2 ...
@@ -33,8 +37,8 @@ KE = 1/2* ( m1*vg^2 ...
     +m4*vg4^2+Ig3*theta3_dot^2 );
 PE = g* (m1*yg ...
     + m2*(yg-d1*cos(theta1))...
-    + m3*(yg-d1*cos(theta1)-d2*cos(theta2))...
-    + m4*(yg - d1*cos(theta1)-d2*cos(theta2)-d3*cos(theta3)));
+    + m3*(yg-2*d1*cos(theta1)-d2*cos(theta2))...
+    + m4*(yg -2*d1*cos(theta1)-2*d2*cos(theta2)-d3*cos(theta3)));
 
 L = KE-PE;
 
@@ -44,8 +48,11 @@ q = [xg yg theta1 theta2 theta3]';
 q_dot = [xg_dot yg_dot theta1_dot theta2_dot theta3_dot]';
 q_ddot = [xg_ddot yg_ddot theta1_ddot theta2_ddot theta3_ddot]';
 
-Q = [100-lam, lam, -0.2, -0.2, -0.2]'; %100 is forcing lam is constraint
-
+% Q MUST BE REPLACED %100 is forcing lam is constraint
+%Q = [600-lam, lam, -0.2, -0.2, -0.2]'; % y = x
+%Q = [-(2*xg+3)*lam, lam,-0.2,-0.2,-0.2]'; % y = (x-3)^2+1
+Q = [200-1/5*(xg/10-3)*lam, lam,-0.2,-0.2,-0.2]'; % y = (x/10-3)^2+1
+%Q = [1+sin(xg)*lam, lam, -0.2, -0.2,-0.2]'; % y = cos(x)
 %Q = [0,0,0,0,0]';
 
 %EoM = J(J(L,q_dot),q)*q_dot + J(J(L,q_dot),q_dot)*q_ddot - J(L,q) == Q;
@@ -62,8 +69,11 @@ eom5 = EoM(5);
 sol = solve([eom1;eom2;eom3;eom4;eom5],[xg_ddot,yg_ddot,theta1_ddot,theta2_ddot,theta3_ddot])
 
 %constraint 1
-%y_ddot-x_ddot = 0
-lamfun = sol.yg_ddot-sol.xg_ddot == 0;
+%y_ddot-x_ddot = 0 %LAMFUN MUST BE REPLACED WITH FUN
+%lamfun = sol.yg_ddot-sol.xg_ddot == 0; % y = x
+%lamfun = sol.yg_ddot - 2*xg_dot^2-2*(xg-3)*sol.xg_ddot == 0; % y = (x-3)^2 + 1
+lamfun = sol.yg_ddot == 1/50*xg_dot^2 + 1/5*(xg/10-3)*sol.xg_ddot; % y = (x/10-3)^2 + 1
+%lamfun = sol.yg_ddot == -sin(xg)*sol.xg_ddot - cos(xg)*xg_dot^2 ; %y = cos(x)
 lam_sol = solve(lamfun,lam);
 
 matlabFunction([sol.xg_ddot sol.yg_ddot sol.theta1_ddot, sol.theta2_ddot,sol.theta3_ddot],'File','sol_funs')
@@ -72,28 +82,40 @@ matlabFunction(lam_sol,'File','lam_func')
 %%
 clear; clc;
 
-m1 = 1;
-m2 = 5;
-m3 = 1;
-m4 = 1;
+m1 = 30;
+m2 = 15;
+m3 = 5;
+m4 = 2;
+
 d1 = 5;
 d2 = 5;
 d3 = 5;
+
 G = 9.81;
 
 ff = pi/4;
-X0_0 = [0,0,0,0,0]; %xg yg theta1 theta2 theta3
+X0_0 = [0, 10, 0,0,0];
+%X0_0 = [0,1,0,0,0]; %xg yg theta1 theta2 theta3 y=cos(x)
 X0_1 = [0,0,0,0,0]; %xg_dot yg_dot, theta1_dot, theta2_dot, theta3_dot
 X0 = [X0_0, X0_1];
 
 % Create time span for use with ode45
 
 
-t = [0 15];
-% Create function f(t,X) for use with ode45
-fdynamic    = @(t,X) spy(t,X,m1,m2,m3,m4, d1,d2,d3,G);
+%t = [0 5];
+t = linspace(0,5,1e2);
+
+fdynamic    = @(t,X) spy(t,X,m1,m2,m3,m4, d1/2,d2/2,d3/2,G);
 % Solve the EoM with ode45
-[t,X] = ode45(fdynamic,t,X0);
+options = odeset('RelTol',1e-9,'AbsTol',1e-9,'Refine',2);
+% options    = odeset('Events', @myEvent);
+[t,X] = ode45(fdynamic,t,X0,options);
+
+% function [value, isterminal, direction] = myEvent(t, X)
+% value      = (X(1) >= 2*pi);
+% isterminal = 1;   % Stop the integration
+% direction  = 0;
+% end
 
 
 function Xdot = spy(t,X, m1,m2,m3,m4, d1,d2,d3,G)
@@ -109,10 +131,11 @@ theta1_dot = X(8);
 theta2_dot = X(9);
 theta3_dot = X(10);
 
-%LAM_SOL = LAM_SOL = LAM_FUNC(D1,D2,D3,G,M1,M2,M3,M4,THETA1,THETA2,THETA3,THETA1_DOT,THETA2_DOT,THETA3_DOT)
-lam =      lam_func(d1,d2,d3,G,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot);
-%OUT1 = SOL_FUNS(D1,D2,D3,G,LAM,M1,M2,M3,M4,THETA1,THETA2,THETA3,THETA1_DOT,THETA2_DOT,THETA3_DOT)
-ddots = sol_funs(d1,d2,d3,G,lam,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot);
+%LAM_SOL = LAM_FUNC(D1,D2,D3,G,M1,M2,M3,M4,THETA1,THETA2,THETA3,THETA1_DOT,THETA2_DOT,THETA3_DOT,XG,XG_DOT)
+lam =      lam_func(d1,d2,d3,G,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot,xg,xg_dot);
+%OUT1 = SOL_FUNS(D1,D2,D3,G,LAM,M1,M2,M3,M4,THETA1,THETA2,THETA3,THETA1_DOT,THETA2_DOT,THETA3_DOT,XG)
+ddots = sol_funs(d1,d2,d3,G,lam,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot,xg);
 
 Xdot = [xg_dot, yg_dot, theta1_dot, theta2_dot, theta3_dot, ddots]';
 end
+
