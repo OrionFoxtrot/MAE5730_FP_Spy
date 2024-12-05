@@ -8,14 +8,17 @@ t3 = X(:,11);
 xg_0 = X(:,1);
 yg_0 = X(:,2);
 
-%overlay stuff
-l = length(xg_0);
-funx = linspace(min(xg_0),max(xg_0));
-funy = 2*cos(funx/3);
-
 close all
 hold on
-plot(funx,funy);
+
+%overlay stuff
+funx0 = linspace(0,60,1e3);
+funx1 = linspace(60,100,1e3);
+funy0 = (funx0./10-3).^2+1;
+funy1 = (-1/10*funx1+16);
+plot(funx0,funy0);
+plot(funx1,funy1);
+
 axis equal
 xlim([-10 10])
 ylim([-20 10])
