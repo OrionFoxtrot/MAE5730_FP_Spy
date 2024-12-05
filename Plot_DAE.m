@@ -14,10 +14,13 @@ hold on
 %overlay stuff
 funx0 = linspace(0,60,1e3);
 funx1 = linspace(60,100,1e3);
+funx2 = linspace(100,140,1e3);
 funy0 = (funx0./10-3).^2+1;
 funy1 = (-1/10*funx1+16);
+funy2 = -(funx2/10-12).^2+10;
 plot(funx0,funy0);
 plot(funx1,funy1);
+plot(funx2,funy2);
 
 axis equal
 xlim([-10 10])

@@ -52,11 +52,13 @@ function gen = generate_equations(stage)
     % Q MUST BE REPLACED %100 is forcing lam is constraint
     
     if stage == 0
-        Q = [200-1/5*(xg/10-3)*lam, lam,-0.2,-0.2,-0.2]'; % y = (x/10-3)^2+1
+        Q = [100-1/5*(xg/10-3)*lam, lam, -1,-1,-1]'; % y = (x/10-3)^2+1
     end
-    
     if stage == 1
-        Q = [200-1/10*lam, lam, -0.2, -0.2, -0.2]'; % y = -1/10x+16
+        Q = [250-1/10*lam, lam, -1, -1, -1]'; % y = -1/10x+16
+    end
+    if stage == 2
+        Q = [250+1/5*(xg/10-12)*lam, lam, -1, -1, -1]'; % y = -(x/10-12)^2+10
     end
     
     %Q = [600-lam, lam, -0.2, -0.2, -0.2]'; % y = x
@@ -65,7 +67,6 @@ function gen = generate_equations(stage)
     %Q = [1+sin(xg)*lam, lam, -0.2, -0.2,-0.2]'; % y = cos(x)
     %Q = [0,0,0,0,0]';
     
-    %EoM = J(J(L,q_dot),q)*q_dot + J(J(L,q_dot),q_dot)*q_ddot - J(L,q) == Q;
     EoM = J(J(L,q_dot),q_dot)*q_ddot +  J(J(L,q_dot),q)*q_dot - J(L,q)' == Q;
     
     eom1 = EoM(1);
@@ -73,9 +74,7 @@ function gen = generate_equations(stage)
     eom3 = EoM(3);
     eom4 = EoM(4);
     eom5 = EoM(5);
-    
-    
-    
+
     sol = solve([eom1;eom2;eom3;eom4;eom5],[xg_ddot,yg_ddot,theta1_ddot,theta2_ddot,theta3_ddot])
     
     %constraint 1
@@ -86,6 +85,9 @@ function gen = generate_equations(stage)
     end
     if stage == 1
         lamfun = sol.yg_ddot+1/10*sol.xg_ddot == 0; % y = x
+    end
+    if stage == 2
+        lamfun = sol.yg_ddot == -1/50*xg_dot^2 - 1/5*(xg/10-12)*sol.xg_ddot; %y = -(x/10-12)^2+10
     end
     %lamfun = sol.yg_ddot-sol.xg_ddot == 0; % y = x
     %lamfun = sol.yg_ddot - 2*xg_dot^2-2*(xg-3)*sol.xg_ddot == 0; % y = (x-3)^2 + 1
@@ -100,7 +102,15 @@ function gen = generate_equations(stage)
     matlabFunction(lam_sol,'File',v2)
 end
 
+%single generation
+generate_equations(0)
+
+%% Course Generation
+clear; clc;
+generate_equations(0)
 generate_equations(1)
+generate_equations(2)
+disp('generation complete')
 %%
 clear; clc;
 addpath("EL_Eqs\");
@@ -122,10 +132,6 @@ X0_0 = [0, 10, 0,0,0];
 X0_1 = [0,0,0,0,0]; %xg_dot yg_dot, theta1_dot, theta2_dot, theta3_dot
 X0 = [X0_0, X0_1];
 
-% Create time span for use with ode45
-
-
-%t = [0 5];
 t = linspace(0,100,9e2);
 %options = odeset('RelTol',1e-9,'AbsTol',1e-9,'Refine',2);
 
@@ -137,16 +143,26 @@ lastX = X(length(X),:);
 lastX(6)=0;
 lastX(7)=0;
 
-% X0_0 = [60, 10, 0,0,0];
-% X0_1 = [0,0,0,0,0]; %xg_dot yg_dot, theta1_dot, theta2_dot, theta3_dot
-% lastX = [X0_0, X0_1];
 t = linspace(0,100,9e2);
 fdynamic    = @(t,X) spy1(t,X,m1,m2,m3,m4,d1/2,d2/2,d3/2,G);
 options    = odeset('RelTol',1e-9,'AbsTol',1e-9,'Refine',2,'Events', @stage1_stop);
 [t1,X1] = ode45(fdynamic,t,lastX,options);
 
-%t = [t;t1];
-X = [X;X1];
+lastX1 = X1(length(X1),:);
+lastX1(6)=0;
+lastX1(7)=0;
+
+% X0_0 = [100, 6, 0,0,0];
+% X0_1 = [0,0,0,0,0]; %xg_dot yg_dot, theta1_dot, theta2_dot, theta3_dot
+% lastX1 = [X0_0, X0_1];
+
+t = linspace(0,100,9e2);
+fdynamic    = @(t,X) spy2(t,X,m1,m2,m3,m4,d1/2,d2/2,d3/2,G);
+options    = odeset('RelTol',1e-9,'AbsTol',1e-9,'Refine',2,'Events', @stage2_stop);
+[t2,X2] = ode45(fdynamic,t,lastX1,options);
+
+
+X = [X;X1;X2];
 
 function [value, isterminal, direction] = stage0_stop(t, X)
 value      = (X(1) >= 60);
@@ -160,6 +176,11 @@ isterminal = 1;   % Stop the integration
 direction  = 0;
 end
 
+function [value, isterminal, direction] = stage2_stop(t, X)
+value      = (X(1) >= 140);
+isterminal = 1;   % Stop the integration
+direction  = 0;
+end
 
 
 function Xdot = spy(t,X, m1,m2,m3,m4, d1,d2,d3,G)
@@ -204,3 +225,23 @@ ddots = sol_funs_1(d1,d2,d3,G,lam,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,th
 Xdot = [xg_dot, yg_dot, theta1_dot, theta2_dot, theta3_dot, ddots]';
 end
 
+function Xdot = spy2(t,X, m1,m2,m3,m4, d1,d2,d3,G)
+
+xg = X(1);
+yg = X(2);
+theta1 = X(3);
+theta2 = X(4);
+theta3 = X(5);
+xg_dot = X(6);
+yg_dot = X(7);
+theta1_dot = X(8);
+theta2_dot = X(9);
+theta3_dot = X(10);
+
+%LAM_SOL = LAM_FUNC(D1,D2,D3,G,M1,M2,M3,M4,THETA1,THETA2,THETA3,THETA1_DOT,THETA2_DOT,THETA3_DOT,XG,XG_DOT)
+lam =      lam_func_2(d1,d2,d3,G,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot,xg,xg_dot);
+%OUT1 = SOL_FUNS(D1,D2,D3,G,LAM,M1,M2,M3,M4,THETA1,THETA2,THETA3,THETA1_DOT,THETA2_DOT,THETA3_DOT,XG)
+ddots = sol_funs_2(d1,d2,d3,G,lam,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot,xg);
+
+Xdot = [xg_dot, yg_dot, theta1_dot, theta2_dot, theta3_dot, ddots]';
+end

@@ -29,25 +29,29 @@ y3 = y1(t) - 2*d1*cos(theta1(t)) - d2*cos(theta2(t));
 
 x4 = x1(t) + 2*d1*sin(theta1(t)) + 2*d2*sin(theta2(t)) + d3*sin(theta3(t));
 y4 = y1(t) - 2*d1*cos(theta1(t)) - 2*d2*cos(theta2(t)) - d3*cos(theta3(t));
-%%
+%% DAE
 clear; clc;
 syms x(t) t
 
-y = x^2;
-pretty(simplify(diff(diff(y,t))))
+% y = x^2;
+% pretty(simplify(diff(diff(y,t))))
+% 
+% y = 2*cos(x(t)/3);
+% pretty(simplify(diff(diff(y,t))))
+% pretty(simplify(diff(y,x)))
+% 
+% y = (x/10-3)^2-1
+% pretty(simplify(diff(diff(y,t))))
+% pretty(simplify(diff(y,x)))
 
-y = 2*cos(x(t)/3);
+y = -(x/10-12)^2+10
 pretty(simplify(diff(diff(y,t))))
 pretty(simplify(diff(y,x)))
-
-y = (x/10-3)^2-1
-pretty(simplify(diff(diff(y,t))))
-pretty(simplify(diff(y,x)))
-%%
+%% EL
 clear; clc;
 syms x(t) t
 
-y = (x(t)/10-3)^2+1;
+y = -(x(t)/10-12)^2+10;
 %y = cos(x(t));
 pretty(simplify((diff(y,t))))
 pretty(simplify(diff(diff(y,t))))
