@@ -34,6 +34,14 @@ function traj = plot_trajj(X,method)
     end
  
     hold on
+    funx0 = linspace(0,60,1e3);
+    funx1 = linspace(60,100,1e3);
+    funx2 = linspace(100,140,1e3);
+    funy0 = (funx0./10-3).^2+1;
+    funy1 = (-1/10*funx1+16);
+    funy2 = -(funx2/10-12).^2+10;
+    %plot(funx0,funy0,funx1,funy1,funx2,funy2,DisplayName="Course")
+
     plot(xg_0,yg_0,'r',DisplayName="Trolley CG")
     plot(cg1(1,:), cg1(2,:),'g',DisplayName="Link 1 CG")
     plot(cg2(1,:), cg2(2,:),'b',DisplayName="Link 2 CG")

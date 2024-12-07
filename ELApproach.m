@@ -50,15 +50,15 @@ function gen = generate_equations(stage)
     q_ddot = [xg_ddot yg_ddot theta1_ddot theta2_ddot theta3_ddot]';
     
     % Q MUST BE REPLACED %100 is forcing lam is constraint
-    
+    c = 1;
     if stage == 0
-        Q = [100-1/5*(xg/10-3)*lam, lam, -1,-1,-1]'; % y = (x/10-3)^2+1
+        Q = [100-1/5*(xg/10-3)*lam, lam, c,c,c]'; % y = (x/10-3)^2+1
     end
     if stage == 1
-        Q = [250-1/10*lam, lam, -1, -1, -1]'; % y = -1/10x+16
+        Q = [250-1/10*lam, lam, c,c, c]'; % y = -1/10x+16
     end
     if stage == 2
-        Q = [250+1/5*(xg/10-12)*lam, lam, -1, -1, -1]'; % y = -(x/10-12)^2+10
+        Q = [250+1/5*(xg/10-12)*lam, lam, c, c, c]'; % y = -(x/10-12)^2+10
     end
     
     %Q = [600-lam, lam, -0.2, -0.2, -0.2]'; % y = x
@@ -132,9 +132,11 @@ X0_0 = [0, 10, 0,0,0];
 X0_1 = [0,0,0,0,0]; %xg_dot yg_dot, theta1_dot, theta2_dot, theta3_dot
 X0 = [X0_0, X0_1];
 
-t = linspace(0,100,9e2);
-%options = odeset('RelTol',1e-9,'AbsTol',1e-9,'Refine',2);
 
+
+
+%Stage 0 => y = (x/10-3)^2+1
+t = linspace(0,100,9e2);
 fdynamic    = @(t,X) spy(t,X,m1,m2,m3,m4,d1/2,d2/2,d3/2,G);
 options    = odeset('RelTol',1e-9,'AbsTol',1e-9,'Refine',2,'Events', @stage0_stop);
 [t,X] = ode45(fdynamic,t,X0,options);
@@ -142,7 +144,9 @@ options    = odeset('RelTol',1e-9,'AbsTol',1e-9,'Refine',2,'Events', @stage0_sto
 lastX = X(length(X),:);
 lastX(6)=0;
 lastX(7)=0;
+% lastX(7)=stage2_dot(lastX(1), lastX(6));
 
+%Stage 1 => y = -(1/10)x+16
 t = linspace(0,100,9e2);
 fdynamic    = @(t,X) spy1(t,X,m1,m2,m3,m4,d1/2,d2/2,d3/2,G);
 options    = odeset('RelTol',1e-9,'AbsTol',1e-9,'Refine',2,'Events', @stage1_stop);
@@ -151,11 +155,9 @@ options    = odeset('RelTol',1e-9,'AbsTol',1e-9,'Refine',2,'Events', @stage1_sto
 lastX1 = X1(length(X1),:);
 lastX1(6)=0;
 lastX1(7)=0;
+% lastX1(7)=stage3_dot(lastX1(1), lastX1(6));
 
-% X0_0 = [100, 6, 0,0,0];
-% X0_1 = [0,0,0,0,0]; %xg_dot yg_dot, theta1_dot, theta2_dot, theta3_dot
-% lastX1 = [X0_0, X0_1];
-
+%Stage 2 => -(x/10-12)^2+16
 t = linspace(0,100,9e2);
 fdynamic    = @(t,X) spy2(t,X,m1,m2,m3,m4,d1/2,d2/2,d3/2,G);
 options    = odeset('RelTol',1e-9,'AbsTol',1e-9,'Refine',2,'Events', @stage2_stop);
@@ -244,4 +246,26 @@ lam =      lam_func_2(d1,d2,d3,G,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,the
 ddots = sol_funs_2(d1,d2,d3,G,lam,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot,xg);
 
 Xdot = [xg_dot, yg_dot, theta1_dot, theta2_dot, theta3_dot, ddots]';
+end
+
+
+function y = stage1(x)
+    y = (x/10-3)^2+1;
+end
+function y_dot = stage1_dot(x, x_dot)
+    y_dot = -(x/10-12)*x_dot/5;
+end
+
+function y = stage2(x)
+    y = -(1/10)*x+16;
+end
+function y_dot = stage2_dot(x, x_dot)
+    y_dot = -x_dot/10;
+end
+
+function y = stage3(x)
+    y = -(x/10-12)^2+10;
+end
+function y_dot = stage3_dot(x, x_dot)
+    y_dot = -(x/10-12)*x_dot/5;
 end

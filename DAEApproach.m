@@ -4,7 +4,7 @@ function gen = generate_matrix(stage)
     syms x1_dot y1_dot theta1_dot x2_dot y2_dot theta2_dot x3_dot y3_dot theta3_dot x4_dot y4_dot real
     syms theta1_ddot x2_ddot y2_ddot theta2_ddot x3_ddot y3_ddot theta3_ddot x4_ddot y4_ddot real
     syms rx1 ry1 rx2 ry2 rx3 ry3 d1 d2 d3 g m1 m2 m3 m4 ig1 ig2 ig3 real
-    syms F F_N_x F_N_y x1_ddot y1_ddot real
+    syms F F_N_x F_N_y x1_ddot y1_ddot c real
     
     %Constraints
     % c1 = x1_ddot - d1*sin(theta1)*theta1_dot^2 + d1*cos(theta1)*theta1_ddot == x2_ddot; %x1
@@ -67,15 +67,15 @@ function gen = generate_matrix(stage)
     
     n1 = -rx1+rx2 == m2*x2_ddot;
     n2 = ry1-ry2 -m2*g == m2*y2_ddot;
-    n3 = rx1*d1*cos(theta1)-ry1*d1*sin(theta1)+rx2*d1*cos(theta1)-ry2*d1*sin(theta1)== ig1 * theta1_ddot;
+    n3 = rx1*d1*cos(theta1)-ry1*d1*sin(theta1)+rx2*d1*cos(theta1)-ry2*d1*sin(theta1) -c*theta1_dot == ig1 * theta1_ddot;
     
     n4 = -rx2+rx3 == m3*x3_ddot;
     n5 = ry2-ry3-m3*g==m3*y3_ddot;
-    n6 = rx2*d2*cos(theta2)-ry2*d2*sin(theta2)+rx3*d2*cos(theta2)-ry3*d2*sin(theta2)== ig2*theta2_ddot;
+    n6 = rx2*d2*cos(theta2)-ry2*d2*sin(theta2)+rx3*d2*cos(theta2)-ry3*d2*sin(theta2) -c*theta2_dot== ig2*theta2_ddot;
     
     n7 = -rx3 == m4*x4_ddot;
     n8 = ry3-m4*g == m4*y4_ddot;
-    n9 = rx3*d3*cos(theta3)-ry3*d3*sin(theta3) == ig3*theta3_ddot;
+    n9 = rx3*d3*cos(theta3)-ry3*d3*sin(theta3) -c*theta3_dot == ig3*theta3_ddot;
     
     vars = [x1_ddot y1_ddot x2_ddot y2_ddot theta1_ddot x3_ddot y3_ddot theta2_ddot x4_ddot y4_ddot theta3_ddot ...
         rx1 ry1 rx2 ry2 rx3 ry3 F_N_x F_N_y];
@@ -112,6 +112,8 @@ d2 = 5;
 d3 = 5;
 G = 9.81;
 
+c=0;
+
 ig1 = m2*(d1)^2/12;
 ig2 = m3*(d2)^2/12;
 ig3 = m4*(d3)^2/12;
@@ -128,15 +130,11 @@ X0_5 = [0,0,0]; %x2 y2 theta1 _DOTS
 X0_6 = [0,0,0]; %x3 y3 theta2 _DOTS
 X0_7 = [0,0,0]; %x4 y4 theta3 _DOTS
 
-F = 250;
-
+F = 100;
 X0 = [X0_0, X0_1, X0_2, X0_3, X0_4, X0_5, X0_6, X0_7];
 
-% Create time span for use with ode45
-
-
 t = linspace(0,100,9e2);
-fdynamic    = @(t,X) spy(t,X,m1,m2,m3,m4, d1/2,d2/2,d3/2,G,ig1,ig2,ig3, F);
+fdynamic    = @(t,X) spy(t,X,m1,m2,m3,m4, d1/2,d2/2,d3/2,G,ig1,ig2,ig3, F,c);
 options = odeset('RelTol',1e-9,'AbsTol',1e-9,'Refine',2,'Events',@stage0_stop);
 [t0,X] = ode15s(fdynamic,t,X0, options);
 
@@ -145,8 +143,9 @@ lastX = X(length(X),:);
 lastX(12)=0;
 lastX(13)=0;
 
+F = 250;
 t = linspace(0,100,9e2);
-fdynamic    = @(t,X) spy1(t,X,m1,m2,m3,m4, d1/2,d2/2,d3/2,G,ig1,ig2,ig3, F);
+fdynamic    = @(t,X) spy1(t,X,m1,m2,m3,m4, d1/2,d2/2,d3/2,G,ig1,ig2,ig3, F,c);
 options = odeset('RelTol',1e-9,'AbsTol',1e-9,'Refine',2,'Events',@stage1_stop);
 [t1,X1] = ode15s(fdynamic,t,lastX, options);
 
@@ -154,8 +153,9 @@ lastX1 = X1(length(X1),:);
 lastX1(12)=0;
 lastX1(13)=0;
 
+F = 250;
 t = linspace(0,100,9e2);
-fdynamic    = @(t,X) spy2(t,X,m1,m2,m3,m4, d1/2,d2/2,d3/2,G,ig1,ig2,ig3, F);
+fdynamic    = @(t,X) spy2(t,X,m1,m2,m3,m4, d1/2,d2/2,d3/2,G,ig1,ig2,ig3, F,c);
 options = odeset('RelTol',1e-9,'AbsTol',1e-9,'Refine',2,'Events',@stage2_stop);
 [t2,X2] = ode15s(fdynamic,t,lastX1, options);
 
@@ -179,7 +179,7 @@ isterminal = 1;   % Stop the integration
 direction  = 0;
 end
 
-function Xdot = spy(t,X, m1,m2,m3,m4, d1,d2,d3,G, ig1,ig2,ig3, F)
+function Xdot = spy(t,X, m1,m2,m3,m4, d1,d2,d3,G, ig1,ig2,ig3, F,c)
 
 x1 = X(1);
 y1 = X(2);
@@ -214,7 +214,7 @@ theta3_dot = X(22);
 %A = DAE_A_funs(D1,D2,D3,IG1,IG2,IG3,M1,M2,M3,M4,THETA1,THETA2,THETA3,X1)
 A = DAE_A_funs_0(d1,d2,d3,ig1,ig2,ig3,m1,m2,m3,m4,theta1,theta2,theta3,x1);
 %B = DAE_B_funs(F,D1,D2,D3,G,M1,M2,M3,M4,THETA1,THETA2,THETA3,THETA1_DOT,THETA2_DOT,THETA3_DOT,X1,X1_DOT)
-b = DAE_B_funs_0(F,d1,d2,d3,G,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot, x1_dot);
+b = DAE_B_funs_0(F,c,d1,d2,d3,G,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot, x1_dot);
 
 u = A\b;
 
@@ -240,7 +240,7 @@ Xdot = [x1_dot,y1_dot, x2_dot y2_dot theta1_dot x3_dot y3_dot theta2_dot x4_dot 
     x1_ddot,y1_ddot, x2_ddot y2_ddot, theta1_ddot, x3_ddot, y3_ddot, theta2_ddot, x4_ddot, y4_ddot, theta3_ddot]';
 end
 
-function Xdot = spy1(t,X, m1,m2,m3,m4, d1,d2,d3,G, ig1,ig2,ig3, F)
+function Xdot = spy1(t,X, m1,m2,m3,m4, d1,d2,d3,G, ig1,ig2,ig3, F,c)
 
 x1 = X(1);
 y1 = X(2);
@@ -275,7 +275,7 @@ theta3_dot = X(22);
 %A = DAE_A_funs(D1,D2,D3,IG1,IG2,IG3,M1,M2,M3,M4,THETA1,THETA2,THETA3)
 A = DAE_A_funs_1(d1,d2,d3,ig1,ig2,ig3,m1,m2,m3,m4,theta1,theta2,theta3);
 %B = DAE_B_funs(F,D1,D2,D3,G,M1,M2,M3,M4,THETA1,THETA2,THETA3,THETA1_DOT,THETA2_DOT,THETA3_DOT)
-b = DAE_B_funs_1(F,d1,d2,d3,G,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot);
+b = DAE_B_funs_1(F,c,d1,d2,d3,G,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot);
 
 u = A\b;
 
@@ -301,7 +301,7 @@ Xdot = [x1_dot,y1_dot, x2_dot y2_dot theta1_dot x3_dot y3_dot theta2_dot x4_dot 
     x1_ddot,y1_ddot, x2_ddot y2_ddot, theta1_ddot, x3_ddot, y3_ddot, theta2_ddot, x4_ddot, y4_ddot, theta3_ddot]';
 end
 
-function Xdot = spy2(t,X, m1,m2,m3,m4, d1,d2,d3,G, ig1,ig2,ig3, F)
+function Xdot = spy2(t,X, m1,m2,m3,m4, d1,d2,d3,G, ig1,ig2,ig3, F,c)
 
 x1 = X(1);
 y1 = X(2);
@@ -336,7 +336,7 @@ theta3_dot = X(22);
 %A = DAE_A_funs(D1,D2,D3,IG1,IG2,IG3,M1,M2,M3,M4,THETA1,THETA2,THETA3,X1)
 A = DAE_A_funs_2(d1,d2,d3,ig1,ig2,ig3,m1,m2,m3,m4,theta1,theta2,theta3,x1);
 %B = DAE_B_funs(F,D1,D2,D3,G,M1,M2,M3,M4,THETA1,THETA2,THETA3,THETA1_DOT,THETA2_DOT,THETA3_DOT,X1,X1_DOT)
-b = DAE_B_funs_2(F,d1,d2,d3,G,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot, x1_dot);
+b = DAE_B_funs_2(F,c,d1,d2,d3,G,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot, x1_dot);
 
 u = A\b;
 

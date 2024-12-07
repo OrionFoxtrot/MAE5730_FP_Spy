@@ -78,3 +78,12 @@ y4 = y1(t) - 2*d1*cos(theta1(t)) - 2*d2*cos(theta2(t)) - d3*cos(theta3(t));
 clear; clc;
 syms c
 vpasolve((-100/10+c)^2+1==6,c)
+
+%%
+clear; clc;
+syms x(t) t
+
+y = -(x(t)/10-12)^2+10;
+y = -(1/10)*x(t)+16;
+y = -(x(t)/10-12)^2+10;
+pretty(simplify(diff(y,t)))
