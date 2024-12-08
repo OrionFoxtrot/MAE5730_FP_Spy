@@ -23,12 +23,18 @@ plot(funx1,funy1);
 plot(funx2,funy2);
 
 axis equal
-xlim([-10 10])
-ylim([-20 10])
+xlim([-10 30])
+ylim([-15 15])
+xline(0);
+xline(60)
+xline(100)
+xline(140)
+xlabel('x')
+ylabel('y')
 
 for i = 1:length(t1)
-    xlim([xg_0(i)-10 xg_0(i)+10])
-    ylim([yg_0(i)-20 yg_0(i)+10])
+    % xlim([xg_0(i)-10 xg_0(i)+10])
+    % ylim([yg_0(i)-20 yg_0(i)+10])
     h1 = plot(xg_0(i), yg_0(i), 'o','MarkerFaceColor','r',MarkerSize=15, DisplayName='G_0 (Head)');
 
     CG_1 = get_next_g([xg_0(i), yg_0(i)],ds(1), t1(i));
@@ -45,10 +51,13 @@ for i = 1:length(t1)
     h7 = plot( [CG_2(1),CG_3(1)], [CG_2(2),CG_3(2)],'MarkerFaceColor','k');
 
     legend([h1,h2,h3,h4])
-    title(sprintf("Index %.2f",i))
+    title(sprintf("Animation for DAE method at index %.2f",i))
     
     pause(0.01)
     
+    if(xg_0(i)>0)
+        break
+    end
     
     if i==length(t1)
         break

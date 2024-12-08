@@ -3,6 +3,9 @@
 \usepackage{subfig}
 \usepackage{indentfirst}
 \usepackage{amsmath}
+\usepackage[verbose]{placeins} 
+\usepackage{float}
+
 
 % Title Page
 \title{MAE 5730 Final Project \\
@@ -142,6 +145,43 @@ The last two equations depend on the stage of the course and varies between the 
 	\end{tabular}
 \end{center}
 
-\section{Still Frames and Trajectory Plots}
+\section{Still Frames}
+Figure's 4 and 5 illustrate still frames taken from two sections of the course, where figure a refers to a frame from the DAE method and figures b refer to a frame from the EL method. Figure 4 comes from an later section of the course where $x = 70$ along the function $-\frac{1}{10}+16$, while figure 5 comes from an earlier section of the course where $x=20$ along the function $(\frac{x}{10}-3)^2 + 1$. The initial conditions for all cases I tested started with the human swinging off the sledge (red) being completely upright, with the values $\theta_1 = \theta_2 = \theta_3=0$ No initial forcing is present except for the forcing of the sledge. The forcing of the sledge is variable between each of the stages but for the following simulations all course stages had the same forcing at $F = 100N$.
 
+\begin{center}
+	\begin{figure}[H]
+		\centering
+		\subfloat[\centering DAE Still Frame]{{\includegraphics[width=8cm]{DAE_SF_2} }}%\\
+		
+		\subfloat[\centering EL Still Frame]{{\includegraphics[width=8cm]{EL_SF_2} }}%\\
+		\caption{Still frames of the DAE and EL method at $x=0$, at the start of the simulation}%
+		\label{fig:example3}%
+	\end{figure}
+\end{center}
+
+
+\begin{center}
+	\begin{figure}[H]
+		\centering
+		\subfloat[\centering DAE Still Frame]{{\includegraphics[width=8cm]{DAE_SF_1} }}%\\
+		
+		\subfloat[\centering EL Still Frame]{{\includegraphics[width=8cm]{EL_SF_1} }}%\\
+		\caption{Still frames of the DAE and EL method at $x=20$}%
+		\label{fig:example4}%
+	\end{figure}
+\end{center}
+
+
+\section{Trajectory Plots}
+\begin{center}
+	\begin{figure}[H]
+		\centering
+		\subfloat[\centering DAE Trajectory]{{\includegraphics[width=8cm]{Traj_DAE_0} }}%\\
+		
+		\subfloat[\centering EL Trajectory]{{\includegraphics[width=8cm]{Traj_EL_0} }}%\\
+		\caption{Trajectory plots along the entire course for DAE and EL methods}%
+		\label{fig:example5}%
+	\end{figure}
+\end{center}
+\section{Discussion}
 \end{document}  

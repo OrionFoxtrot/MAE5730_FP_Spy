@@ -34,10 +34,18 @@ funy2 = -(funx2/10-12).^2+10;
 plot(funx0,funy0);
 plot(funx1,funy1);
 plot(funx2,funy2);
+xlim([-10 30])
+ylim([-15 15])
+xline(0);
+xline(60)
+xline(100)
+xline(140)
+xlabel('x')
+ylabel('y')
 
 for i = 1:length(t1)
-    xlim([xg_0(i)-10 xg_0(i)+10])
-    ylim([yg_0(i)-20 yg_0(i)+10])
+    % xlim([xg_0(i)-10 xg_0(i)+10])
+    % ylim([yg_0(i)-20 yg_0(i)+10])
     h1 = plot(xg_0(i), yg_0(i), 'o','MarkerFaceColor','r',MarkerSize=15, DisplayName='G_0 (Head)');
 
     CG_1 = get_next_g([xg_0(i), yg_0(i)],ds(1), t1(i));
@@ -55,10 +63,13 @@ for i = 1:length(t1)
 
     legend([h1,h2,h3,h4])
     
-    title(sprintf("Index %.2f",i))
+    title(sprintf("Animation for EL method at index %.2f",i))
     pause(0.05)
     
-    
+    if(xg_0(i)>0)
+        break
+    end
+
     if i==length(t1)
         break
     end

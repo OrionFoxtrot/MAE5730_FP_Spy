@@ -46,7 +46,7 @@ function traj = plot_trajj(X,method)
     plot(cg1(1,:), cg1(2,:),'g',DisplayName="Link 1 CG")
     plot(cg2(1,:), cg2(2,:),'b',DisplayName="Link 2 CG")
     plot(cg3(1,:), cg3(2,:),'k',DisplayName="Link 3 CG")
-    legend()
+    legend(Location="southeast")
     title(sprintf("Trajectory of trolley with %s method",met));
     
     hold off

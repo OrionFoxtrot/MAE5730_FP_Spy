@@ -112,7 +112,7 @@ d2 = 5;
 d3 = 5;
 G = 9.81;
 
-c=0;
+c=1;
 
 ig1 = m2*(d1)^2/12;
 ig2 = m3*(d2)^2/12;
@@ -139,21 +139,23 @@ options = odeset('RelTol',1e-9,'AbsTol',1e-9,'Refine',2,'Events',@stage0_stop);
 [t0,X] = ode15s(fdynamic,t,X0, options);
 
 
-lastX = X(length(X),:);
-lastX(12)=0;
-lastX(13)=0;
+lastX = X(height(X),:);
+% lastX(12)=0;
+% lastX(13)=0;
+lastX(13) = stage2_dot(lastX(1),lastX(12));
 
-F = 250;
+F = 100;
 t = linspace(0,100,9e2);
 fdynamic    = @(t,X) spy1(t,X,m1,m2,m3,m4, d1/2,d2/2,d3/2,G,ig1,ig2,ig3, F,c);
 options = odeset('RelTol',1e-9,'AbsTol',1e-9,'Refine',2,'Events',@stage1_stop);
 [t1,X1] = ode15s(fdynamic,t,lastX, options);
 
-lastX1 = X1(length(X1),:);
-lastX1(12)=0;
-lastX1(13)=0;
+lastX1 = X1(height(X1),:);
+% lastX1(12)=0;
+% lastX1(13)=0;
+lastX1(13) = stage3_dot(lastX1(1),lastX1(12));
 
-F = 250;
+F = 100;
 t = linspace(0,100,9e2);
 fdynamic    = @(t,X) spy2(t,X,m1,m2,m3,m4, d1/2,d2/2,d3/2,G,ig1,ig2,ig3, F,c);
 options = odeset('RelTol',1e-9,'AbsTol',1e-9,'Refine',2,'Events',@stage2_stop);
@@ -360,6 +362,27 @@ theta3_ddot = u(11);
 
 Xdot = [x1_dot,y1_dot, x2_dot y2_dot theta1_dot x3_dot y3_dot theta2_dot x4_dot y4_dot theta3_dot, ...
     x1_ddot,y1_ddot, x2_ddot y2_ddot, theta1_ddot, x3_ddot, y3_ddot, theta2_ddot, x4_ddot, y4_ddot, theta3_ddot]';
+end
+
+function y = stage1(x)
+    y = (x/10-3)^2+1;
+end
+function y_dot = stage1_dot(x, x_dot)
+    y_dot = -(x/10-12)*x_dot/5;
+end
+
+function y = stage2(x)
+    y = -(1/10)*x+16;
+end
+function y_dot = stage2_dot(x, x_dot)
+    y_dot = -x_dot/10;
+end
+
+function y = stage3(x)
+    y = -(x/10-12)^2+10;
+end
+function y_dot = stage3_dot(x, x_dot)
+    y_dot = -(x/10-12)*x_dot/5;
 end
 
 
