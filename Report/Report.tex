@@ -13,10 +13,12 @@
 \author{Mark Lohatepanont}
 
 
+
+
 \begin{document}
 \maketitle
+\tableofcontents
 \newpage
-
 \section{Project Specification}
 My project is to model the dynamics of a human taking a zipline through a arbitrarily defined course. The human, or “spy” in the context of this document consists of a 3-link body connected to a point mass. The point mass is representative of the zipline trolley, and the 3 links represent the head-neck connection, neck-waist connection and then waist to toe connection. \\
 
@@ -32,33 +34,49 @@ My project is to model the dynamics of a human taking a zipline through a arbitr
 
 A description of the 3 link connection is established visually above in Figure 1a where each of the links are described as rigid bodies which have their own lengths, masses, moments of inertia as well as their rotation as defined from the perpendicular of the previous link. For some more anatomical accuracy, the body’s joints will also act as torque dampers. 
 This body’s head is then connected to a point mass which serves as the trolley and the forcing of the system that drives the spy through the course. 
-Figure 2b describes the point mass setup with the first link (head connection) also being shown. As mentioned, the point mass has a forcing which will drive it through the course.
-The course itself will be described by 3 distinct functions (subject to change) and is described visually in figure 3.
+Figure 1b describes the point mass setup with the first link (head connection) also being shown. As mentioned, the point mass has a forcing which will drive it through the course.
+The course itself will be described by 3 distinct functions and is described visually in figure 3. Concretely, the 3 equations that compose the course are:
+\begin{center}
+	\begin{tabular}{c|c}
+		Course Section & Function\\
+		\hline
+		1&$(\frac{x}{10}-3)^2+1$\\
+		2&$\frac{-1}{10}+16$\\
+		3&$-(\frac{x}{10}-12)^2+10$
+	\end{tabular}
+\end{center}
 
-\begin{figure}[h]
+\begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.5]{course_description}	
 	\caption{Description of course}
 \end{figure}
 
-The spy’s trolley will be attached to the lines shown and follow the course. Where the start is at X = 0, and the end at X = 15. (Subject to Change)
+The spy’s trolley will be attached to the lines shown and follow the course. Where the start is at X = 0, and the end at X = 140.
 The goal of the project is to develop the model and a visual representation of the system that can be plotted. An additional goal would be to find out how much forcing can be applied to the spy’s trolley to 
 get them to the end of the course as quick as possible before the links loop upon themselves which will metaphorically mean that the spy has died and unsuccessfully made it to the end. 
+\subsection{Global Free Body Diagram}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{global_FBD_1_anno}	
+	\caption{Global Free Body Diagram}
+\end{figure}
+Figure 3 depicts the general free body diagram. In minimal coordinates the trolley has 2 degrees of freedom in x and y, while the links are free to rotate with one degree of freedom each with their own angle. More accurate descriptions of the free body diagrams (FBD's) of each of the elements including the sledge and each link. For clarity the reaction forces have not been drawn, but they are shown in the individual FBD's in section 2.1.1. The constraints can be clearly defined as 2 non-conservative forces (Forcing and torque dampers) and 1 holonomic constraint (Positional Constraint from course).
 
 \section{Equations of Motion}
 \subsection{Differential Algebraic System of Equations Method (DAE)}
 The setup consists of one force leading to a non-conservative force, one holonomic constraint coming from the course, and one non-holonomic constraint coming from the torque dampers. I will deal with the course's holonomic constraint by using constraint equations on the normal force interacting between the sledge and cart as well as the second derivative of the course's definition. For the torque damper, I’ll incorporate it into the angular moment balances to reduce the torque on the joints. Different sections of the course will be piece wised together. \\
 \subsubsection{Free Body Diagrams}
-To aid in the DAE method, I created free body diagrams for each of the bodies in my system. The bodies are the sledge, shown in Figure 3a, link 1, shwon in figure 3b, link 2 shown in figure 3c, and link 3 shown in figure 3d. Using these free body diagrams, I generated 11 Newton-Euler equations by performing Linear Momentum Balance (LMB) on the sledge, link 1, link 2 and link 3 in both the $\hat{i}$ and $\hat{j}$ coordinate frames along with 3 angular momentum balance (AMB) around the center of gravity's (CG) of link 1, link 2 and link 3. Along with these equations I also generated 8 constraint equations, 6 coming the constraints in the $\hat{i}$ and $\hat{j}$ in each of the three links. The last two constraints come from the holonomic constraints for the normal force which comes from the sledge interacting with the course.
+To aid in the DAE method, I created free body diagrams for each of the bodies in my system. The bodies are the sledge, shown in Figure 4a, link 1, shwon in figure 4b, link 2 shown in figure 4c, and link 3 shown in figure 4d. Using these free body diagrams, I generated 11 Newton-Euler equations by performing Linear Momentum Balance (LMB) on the sledge, link 1, link 2 and link 3 in both the $\hat{i}$ and $\hat{j}$ coordinate frames along with 3 angular momentum balance (AMB) around the center of gravity's (CG) of link 1, link 2 and link 3. Along with these equations I also generated 8 constraint equations, 6 coming the constraints in the $\hat{i}$ and $\hat{j}$ in each of the three links. The last two constraints come from the holonomic constraints for the normal force which comes from the sledge interacting with the course.
 \begin{figure}[h]
 	\centering
-	\subfloat[\centering Sledge FBD]{{\includegraphics[width=5cm]{DAE_FBD_0} }}%
+	\subfloat[\centering Sledge FBD]{{\includegraphics[width=7cm]{DAE_FBD_0} }}%
 	\qquad
-	\subfloat[\centering Link 1 FBD]{{\includegraphics[width=5cm]{DAE_FBD_1} }}%\\
+	\subfloat[\centering Link 1 FBD]{{\includegraphics[width=7cm]{DAE_FBD_1} }}%\\
 	\qquad
-	\subfloat[\centering Link 2 FBD]{{\includegraphics[width=5cm]{DAE_FBD_2} }}%\\
+	\subfloat[\centering Link 2 FBD]{{\includegraphics[width=7cm]{DAE_FBD_2} }}%\\
 	\qquad
-	\subfloat[\centering Link 3 FBD]{{\includegraphics[width=5cm]{DAE_FBD_3} }}%\\
+	\subfloat[\centering Link 3 FBD]{{\includegraphics[width=7cm]{DAE_FBD_3} }}%\\
 	\caption{Description of FBD model components}%
 	\label{fig:example2}%
 \end{figure}
@@ -111,7 +129,7 @@ The last two equations depend on the stage of the course and varies between the 
 \end{center}
 These 19 equations are then entered into matlab and solved for each of the maximal coordinates. 
 \subsubsection{Initial Conditions}
-When entering a zipline, I felt like most people try to enter them as straight as possible. So I will also model the individual as being straight at the beginning of the course. Since the sledge is providing forcing, I will also not add any initial velocities to any of the coordinates. To summarize, out of the 19 maximal coordinates, only 3 will be non-zero, this is summarized below:
+When entering a zipline, I felt like most people try to enter them as straight as possible. So I will also model the individual as being straight at the beginning of the course. Since the sledge is providing forcing, I will also not add any initial velocities to any of the coordinates. Further, for simulation setup, I defined each length of $d_1=d_2=d_3=5$ and the masses $m_1=30, m_2=15,m_3=5,$ and $m_4 = 2$. To further summarize the state variables used for the simulation, out of the 19 maximal coordinates, only 3 will be non-zero, this is summarized below:
 \begin{center}
 	\begin{tabular}{c|c||c|c||c|c}
 		Coordinate&Initial Condition&Coordinate&Initial Condition&Coordinate&Initial Condition\\
@@ -122,6 +140,7 @@ When entering a zipline, I felt like most people try to enter them as straight a
 		$x_4$&0&$y_4$&-5&$\theta_3$&0\\
 	\end{tabular}
 \end{center}
+Other conditions were a forcing of $F = 100N$ and torque campers with $c = -1$.
 
 \subsection{Euler-Lagrange Method}
 \subsubsection{Constraints}
@@ -157,7 +176,8 @@ Finally, the potential energy is defined in 3 as the heights of the center of gr
 		+ m_4 \left( y_1 - d_1 \cos(\theta_1) - d_2 \cos(\theta_2) - d_3 \cos(\theta_3) \right) )	
 	\end{split}
 \end{equation}
-An additional section to this is the Lagrangian generalized non-conservative forces term. This term accounts for the constraints in the track as well as the forcing and damping in the system. The forcing is represented by a positive $x$ direction forcing of 100N and the holonomic constraint from the course as mentioned in the table from 2.1.1 leads to the next constraints in the x direction. The generalized non-conservative force terms exist for each of the 5 generalized coordinates and differ for each of the three course sections. The terms summarized as a vector with 5 components with the component 1 representing non-conservative forces in $x$, component 2 in $y$, component 3 in $\theta_1$, component 4 in $\theta_2$ and component 5 in $\theta_3$. This is shown in the table below as the Q vector corresponding to each course section:
+The Lagrangian is then defined as $\mathcal{L} = E_k - E_p$. This is too long, and will not be shown here but can be inspected in the appendix 6.1.
+An additional section to the Lagrangian is the Lagrangian generalized non-conservative forces terms. These terms accounts for the constraints in the course as well as the forcing and damping in the system. The forcing is represented by a positive $x$ direction value of 100N, the torque dampers are represented by a value equal to $-c\dot{\theta_n}$ in each of the thetas, and the holonomic constraint from the course as mentioned in the table from 2.1.1 leads to the lagrange multipliers that appear in the $x$ and $y$ terms. The generalized non-conservative force terms exist for each of the 5 generalized coordinates and differ for each of the three course sections. The terms summarized as a vector with 5 components with the component 1 representing non-conservative forces in $x$, component 2 in $y$, component 3 in $\theta_1$, component 4 in $\theta_2$ and component 5 in $\theta_3$. This is shown in the table below as the Q vector corresponding to each course section:
 \begin{center}
 	\begin{tabular}{c|c|c}
 		Course Section& Function & Generalized non-conservative forces Q terms\\
@@ -168,22 +188,21 @@ An additional section to this is the Lagrangian generalized non-conservative for
 		
 	\end{tabular}
 \end{center}
-
-The Lagrangian is then defined as $\mathcal{L} = E_k - E_p$. This is too long, and will not be shown. To obtain the equations of motion the following is used for each of the conditions where in $Q_n[x]$, $n$ represents the stage of the equation and $x$ represents the index of the generalized coordinate to be used:
+To obtain the equations of motion the following is used for each of the conditions where in $Q_n[x]$, $n$ represents the stage of the equation and $x$ represents the index of the generalized coordinate to be used. Given that the full definitions are too long, I will only provide the generalized form with generalized coordinates substituted. For clarity, I will also substitute in the non-generalized force terms for the first course section:
 \begin{center}
-	\begin{tabular}{c|c}
-		Generalized Coordinate & EL equation\\
+	\begin{tabular}{c|c|c}
+		Generalized Coordinate & EL equation &First Course Section\\
 		\hline
-		$x_1$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{x_1}}}-\frac{\partial{\mathcal{L}}}{\partial{x_1}}=Q_n[1]$\\
-		$y_1$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{y_1}}}-\frac{\partial{\mathcal{L}}}{\partial{y_1}}=Q_n[2]$\\
-		$\theta_1$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{\theta_1}}}-\frac{\partial{\mathcal{L}}}{\partial{\theta_1}}=Q_n[3]$	\\		
-		$\theta_2$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{\theta_2}}}-\frac{\partial{\mathcal{L}}}{\partial{\theta_2}}=Q_n[4]$	\\
-		$\theta_3$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{\theta_3}}}-\frac{\partial{\mathcal{L}}}{\partial{\theta_3}}=Q_n[5]$	\\
+		$x_1$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{x_1}}}-\frac{\partial{\mathcal{L}}}{\partial{x_1}}=Q_n[1]$&$Q_1[1] = 100 - \frac{1}{5} \left( \frac{x_1}{10} - 3 \right) \lambda$\\
+		$y_1$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{y_1}}}-\frac{\partial{\mathcal{L}}}{\partial{y_1}}=Q_n[2]$&$Q_1[2] = \lambda$\\
+		$\theta_1$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{\theta_1}}}-\frac{\partial{\mathcal{L}}}{\partial{\theta_1}}=Q_n[3]$ & $Q_1[3] = c\theta_1$	\\		
+		$\theta_2$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{\theta_2}}}-\frac{\partial{\mathcal{L}}}{\partial{\theta_2}}=Q_n[4]$& $Q_1[4] = c\theta_2$	\\
+		$\theta_3$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{\theta_3}}}-\frac{\partial{\mathcal{L}}}{\partial{\theta_3}}=Q_n[5]$& $Q_1[5] = c\theta_3$	\\
 	\end{tabular}
 \end{center}
 For my implementation I used the Jacobian representation to calculate the equations of motion and saved them to functions in matlab. 
 \subsubsection{Initial Conditions}
-Following the same rules as dictates in the DAE method analysis section 2.1.3, the EL equations will follow a similar basis where the individual is connected to the course straight up. In the minimal coordinates version of this problem the initial conditions for the velocities are all 0 and the positions for the EL method is:
+Following the same rules as dictates in the DAE method analysis section 2.1.3, the EL equations will follow a similar basis where the individual is connected to the course in a vertical setup. Similarly, for simulation setup, I defined each length of $d_1=d_2=d_3=5$ and the masses $m_1=30, m_2=15,m_3=5,$ and $m_4=2$. For the state variables used in the minimal coordinates version of this problem the initial conditions for the velocities are all 0 and the positions for the EL method is:
 \begin{center}
 	\begin{tabular}{c|c}
 		Coordinate&Initial Condition\\
@@ -195,16 +214,17 @@ Following the same rules as dictates in the DAE method analysis section 2.1.3, t
 		$\theta_3$&0
 	\end{tabular}
 \end{center}
-
+Other conditions were a constant forcing of $F = 100N$ and torque campers with $c = -1$.
+\newpage
 \section{Still Frames}
-Figure's 4 and 5 illustrate still frames taken from two sections of the course, where figure a refers to a frame from the DAE method and figures b refer to a frame from the EL method. Figure 4 comes from an later section of the course where $x = 70$ along the function $-\frac{1}{10}+16$, while figure 5 comes from an earlier section of the course where $x=20$ along the function $(\frac{x}{10}-3)^2 + 1$. The initial conditions for all cases I tested started with the human swinging off the sledge (red) being completely upright, with the values $\theta_1 = \theta_2 = \theta_3=0$ No initial forcing is present except for the forcing of the sledge. The forcing of the sledge is variable between each of the stages but for the following simulations all course stages had the same forcing at $F = 100N$.
+Figure's 5 and 6 illustrate still frames taken from two sections of the course, where figure a refers to a frame from the DAE method and figures b refer to a frame from the EL method. Figure 5 comes from the start of the section of the course where $x = 0$ along the function $(\frac{x}{10}-3)^2+16$, while figure 6 comes from an earlier section of the course where $x=20$ along the same function. The initial conditions for all cases I tested started with the human swinging off the sledge (red) being completely upright, with the values $\theta_1 = \theta_2 = \theta_3=0$ No initial forcing is present except for the forcing of the sledge. The forcing of the sledge is variable between each of the stages but for the following simulations all course stages had the same forcing at $F = 100N$.
 
 \begin{center}
 	\begin{figure}[H]
 		\centering
-		\subfloat[\centering DAE Still Frame]{{\includegraphics[width=8cm]{DAE_SF_2_anno} }}%\\
+		\subfloat[\centering DAE Still Frame]{{\includegraphics[width=10cm]{DAE_SF_2_anno} }}%\\
 		
-		\subfloat[\centering EL Still Frame]{{\includegraphics[width=8cm]{EL_SF_2_anno} }}%\\
+		\subfloat[\centering EL Still Frame]{{\includegraphics[width=10cm]{EL_SF_2_anno} }}%\\
 		\caption{Still frames of the DAE and EL method at $x=0$, at the start of the simulation}%
 		\label{fig:example3}%
 	\end{figure}
@@ -214,9 +234,9 @@ Figure's 4 and 5 illustrate still frames taken from two sections of the course, 
 \begin{center}
 	\begin{figure}[H]
 		\centering
-		\subfloat[\centering DAE Still Frame]{{\includegraphics[width=8cm]{DAE_SF_1} }}%\\
+		\subfloat[\centering DAE Still Frame]{{\includegraphics[width=10cm]{DAE_SF_1} }}%\\
 		
-		\subfloat[\centering EL Still Frame]{{\includegraphics[width=8cm]{EL_SF_1} }}%\\
+		\subfloat[\centering EL Still Frame]{{\includegraphics[width=10cm]{EL_SF_1} }}%\\
 		\caption{Still frames of the DAE and EL method at $x=20$}%
 		\label{fig:example4}%
 	\end{figure}
@@ -234,6 +254,7 @@ Figure's 4 and 5 illustrate still frames taken from two sections of the course, 
 		\label{fig:example5}%
 	\end{figure}
 \end{center}
+For a more global view of the entire course, I have also included trajectory plots of where the CG of the point mass and each link are across the entire course.
 \section{Discussion}
 The results of this project demonstrate the effectiveness of modeling a multi-link system traversing a zipline course using both the Euler-Lagrange (EL) and Differential Algebraic Equations (DAE) approaches.
 
@@ -247,11 +268,36 @@ The transition points between course segments also highlighted the limitations o
 
 A discussion about the trajectory plots, the DAE and EL methods differ in their trajectories. While at the beginning, the motion closely matches each other, there seems to be differences towards the later section of the course. This interestingly only occurred when I added the torque dampers and signifies there may be a issue with my implementation. However, even then, the current setup seems to match up closely with each other if you inspect only the general shapes the trajectory takes. For example in the middle section there exist two peaks before a third peak occurs in the last section. This is present in both of the trajectory plots and indicates that the bug perhaps is minor. 
 
-To extend the discussion to energy, I have included an energy plot in figure 7. The energy plot shows that the system is non-conservative, with kinetic energy (KE) increasing significantly due to external forcing while potential energy (PE) remains relatively constant. This makes sense as the sledge has external forcing and is driving the system forward, adding energy and breaking conservation. Additionally, the torque dampers at the joints dissipate mechanical energy, further contributing to the non-conservation of energy. The relatively flat PE suggests that vertical motion has a minimal effect on the system’s energy dynamics, consistent with a primarily horizontal trajectory of the system where the $Y$ values of the system only ever range from 10 and -12. Overall, the observed energy behavior reflects the influence of external forcing as well as damping, which aligns with the non-conservative assumptions of the modeled system.
+To extend the discussion to energy, I have included an energy plot in figure 8. The energy plot shows that the system is non-conservative, with kinetic energy (KE) increasing significantly due to external forcing while potential energy (PE) remains relatively constant. This makes sense as the sledge has external forcing and is driving the system forward, adding energy and breaking conservation. Additionally, the torque dampers at the joints dissipate mechanical energy, further contributing to the non-conservation of energy. The relatively flat PE suggests that vertical motion has a minimal effect on the system’s energy dynamics, consistent with a primarily horizontal trajectory of the system where the $Y$ values of the system only ever range from 10 and -12. Overall, the observed energy behavior reflects the influence of external forcing as well as damping, which aligns with the non-conservative assumptions of the modeled system.
 \begin{center}
 	\begin{figure}[H]
 		\includegraphics[width=15cm]{Energy_analysis}
 		\caption{Energy Plot for my system}%
 	\end{figure}
 \end{center}
+
+\section{Appendix}
+\subsection{The Lagrangian}
+\[
+\begin{aligned}
+	& \mathcal{L} = \frac{m_4}{2}\bigl((\dot{x}_g + 2d_1\dot{\theta}_1\cos(\theta_1) + 2d_2\dot{\theta}_2\cos(\theta_2) 
+	+ d_3\dot{\theta}_3\cos(\theta_3))^2 \\
+	&\qquad + (\dot{y}_g + 2d_1\dot{\theta}_1\sin(\theta_1) + 2d_2\dot{\theta}_2\sin(\theta_2) 
+	+ d_3\dot{\theta}_3\sin(\theta_3))^2 \bigr) \\
+	&\quad + g\bigl(m_3(2d_1\cos(\theta_1) - y_g + d_2\cos(\theta_2)) 
+	- m_2(y_g - d_1\cos(\theta_1)) - m_1y_g \\
+	&\qquad + m_4(2d_1\cos(\theta_1) - y_g + 2d_2\cos(\theta_2) + d_3\cos(\theta_3))\bigr) \\
+	&\quad + \frac{m_2}{2}\bigl((\dot{x}_g + d_1\dot{\theta}_1\cos(\theta_1))^2 
+	+ (\dot{y}_g + d_1\dot{\theta}_1\sin(\theta_1))^2\bigr) \\
+	&\quad + \frac{m_1}{2}(\dot{x}_g^2 + \dot{y}_g^2) \\
+	&\quad + \frac{m_3}{2}\bigl((\dot{x}_g + 2d_1\dot{\theta}_1\cos(\theta_1) + d_2\dot{\theta}_2\cos(\theta_2))^2 
+	+ (\dot{y}_g + 2d_1\dot{\theta}_1\sin(\theta_1) + d_2\dot{\theta}_2\sin(\theta_2))^2\bigr) \\
+	&\quad + \frac{d_1^2 m_2 \dot{\theta}_1^2}{6} 
+	+ \frac{d_2^2 m_3 \dot{\theta}_2^2}{6} 
+	+ \frac{d_3^2 m_4 \dot{\theta}_3^2}{6}.
+\end{aligned}
+\]
+
 \end{document}  
+
+
