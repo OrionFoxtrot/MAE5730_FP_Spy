@@ -20,7 +20,7 @@
 \tableofcontents
 \newpage
 \section{Project Specification}
-My project is to model the dynamics of a human taking a zipline through a arbitrarily defined course. The human, or “spy” in the context of this document consists of a 3-link body connected to a point mass. The point mass is representative of the zipline trolley, and the 3 links represent the head-neck connection, neck-waist connection and then waist to toe connection. \\
+My project is to model the dynamics of a human taking a zipline through a arbitrarily defined 2D course. The human, or “spy” in the context of this document consists of a 3-link body connected to a point mass. The point mass is representative of the zipline trolley, and the 3 links represent the head-neck connection, neck-waist connection and then waist to toe connection. \\
 
         
 \begin{figure}[h]
@@ -200,7 +200,14 @@ To obtain the equations of motion the following is used for each of the conditio
 		$\theta_3$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{\theta_3}}}-\frac{\partial{\mathcal{L}}}{\partial{\theta_3}}=Q_n[5]$& $Q_1[5] = c\theta_3$	\\
 	\end{tabular}
 \end{center}
-For my implementation I used the Jacobian representation to calculate the equations of motion and saved them to functions in matlab. 
+For my implementation I used the Jacobian representation to calculate the equations of motion and saved them to functions in matlab. I used the following equation found in class to simultaniously solve for the equations of motion:
+\[
+\text{Equations of Motion} \;=\; J\bigl(J(\mathcal{L},\dot{q}),\dot{q}\bigr)\,\ddot{q} 
+\;+\; J\bigl(J(\mathcal{L},\dot{q}),q\bigr)\,\dot{q} 
+\;-\; \frac{d}{dt}\bigl(J(\mathcal{L},q)\bigr) 
+\;=\; Q.
+\]
+Where $q$ is the vector of generalized coorrdinates, $\dot{q}$, is the first derivative of the generalized coordinates and $\ddot{q}$ is the second derivative of the generalized coordinates. $\mathcal{L}$, is the Lagrangian as found in Appendix 6.1 and $J(a,b)$ is the Jacobian of function $a$, with respect to $b$.
 \subsubsection{Initial Conditions}
 Following the same rules as dictates in the DAE method analysis section 2.1.3, the EL equations will follow a similar basis where the individual is connected to the course in a vertical setup. Similarly, for simulation setup, I defined each length of $d_1=d_2=d_3=5$ and the masses $m_1=30, m_2=15,m_3=5,$ and $m_4=2$. For the state variables used in the minimal coordinates version of this problem the initial conditions for the velocities are all 0 and the positions for the EL method is:
 \begin{center}
@@ -241,7 +248,6 @@ Figure's 5 and 6 illustrate still frames taken from two sections of the course, 
 		\label{fig:example4}%
 	\end{figure}
 \end{center}
-
 
 \section{Trajectory Plots}
 \begin{center}

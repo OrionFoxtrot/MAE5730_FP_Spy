@@ -78,7 +78,7 @@ function gen = generate_equations(stage)
     eom4 = EoM(4);
     eom5 = EoM(5);
 
-    sol = solve([eom1;eom2;eom3;eom4;eom5],[xg_ddot,yg_ddot,theta1_ddot,theta2_ddot,theta3_ddot])
+    sol = solve([eom1;eom2;eom3;eom4;eom5],[xg_ddot,yg_ddot,theta1_ddot,theta2_ddot,theta3_ddot]);
     
     %constraint 1
     %y_ddot-x_ddot = 0 %LAMFUN MUST BE REPLACED WITH FUN
@@ -133,7 +133,6 @@ c=-1; %Should be Neg
 
 ff = pi/4;
 X0_0 = [0, 10, 0,0,0];
-%X0_0 = [0,1,0,0,0]; %xg yg theta1 theta2 theta3 y=cos(x)
 X0_1 = [0,0,0,0,0]; %xg_dot yg_dot, theta1_dot, theta2_dot, theta3_dot
 X0 = [X0_0, X0_1];
 
@@ -203,10 +202,7 @@ yg_dot = X(7);
 theta1_dot = X(8);
 theta2_dot = X(9);
 theta3_dot = X(10);
-
-%LAM_SOL = LAM_FUNC(D1,D2,D3,G,M1,M2,M3,M4,THETA1,THETA2,THETA3,THETA1_DOT,THETA2_DOT,THETA3_DOT,XG,XG_DOT)
 lam =      lam_func_0(F,c,d1,d2,d3,G,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot,xg,xg_dot);
-%OUT1 = SOL_FUNS(D1,D2,D3,G,LAM,M1,M2,M3,M4,THETA1,THETA2,THETA3,THETA1_DOT,THETA2_DOT,THETA3_DOT,XG)
 ddots = sol_funs_0(F,c,d1,d2,d3,G,lam,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot,xg);
 
 Xdot = [xg_dot, yg_dot, theta1_dot, theta2_dot, theta3_dot, ddots]';
@@ -225,9 +221,7 @@ theta1_dot = X(8);
 theta2_dot = X(9);
 theta3_dot = X(10);
 
-%LAM_SOL = LAM_FUNC(D1,D2,D3,G,M1,M2,M3,M4,THETA1,THETA2,THETA3,THETA1_DOT,THETA2_DOT,THETA3_DOT,XG,XG_DOT)
-lam =      lam_func_1(F,c,d1,d2,d3,G,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot);
-%OUT1 = SOL_FUNS(D1,D2,D3,G,LAM,M1,M2,M3,M4,THETA1,THETA2,THETA3,THETA1_DOT,THETA2_DOT,THETA3_DOT,XG)
+lam = lam_func_1(F,c,d1,d2,d3,G,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot);
 ddots = sol_funs_1(F,c,d1,d2,d3,G,lam,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot);
 
 Xdot = [xg_dot, yg_dot, theta1_dot, theta2_dot, theta3_dot, ddots]';
@@ -246,9 +240,7 @@ theta1_dot = X(8);
 theta2_dot = X(9);
 theta3_dot = X(10);
 
-%LAM_SOL = LAM_FUNC(D1,D2,D3,G,M1,M2,M3,M4,THETA1,THETA2,THETA3,THETA1_DOT,THETA2_DOT,THETA3_DOT,XG,XG_DOT)
 lam =      lam_func_2(F,c,d1,d2,d3,G,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot,xg,xg_dot);
-%OUT1 = SOL_FUNS(D1,D2,D3,G,LAM,M1,M2,M3,M4,THETA1,THETA2,THETA3,THETA1_DOT,THETA2_DOT,THETA3_DOT,XG)
 ddots = sol_funs_2(F,c,d1,d2,d3,G,lam,m1,m2,m3,m4,theta1,theta2,theta3,theta1_dot,theta2_dot,theta3_dot,xg);
 
 Xdot = [xg_dot, yg_dot, theta1_dot, theta2_dot, theta3_dot, ddots]';
