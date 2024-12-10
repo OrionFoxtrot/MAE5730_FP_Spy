@@ -22,13 +22,13 @@ function traj = plot_trajj(X,method)
     cg3 = [];
     for i = 1:length(t1)
   
-        CG_1 = get_next_g([xg_0(i), yg_0(i)],ds(1), t1(i));
+        CG_1 = get_next_g([xg_0(i), yg_0(i)],ds(1)/2, t1(i));
         cg1 = [cg1 CG_1];
     
-        CG_2 = get_next_g(CG_1,ds(2), t2(i));
+        CG_2 = get_next_g(CG_1,ds(2)/2, t2(i));
         cg2 = [cg2 CG_2];
     
-        CG_3 = get_next_g(CG_2,ds(3), t3(i));
+        CG_3 = get_next_g(CG_2,ds(3)/2, t3(i));
         cg3 = [cg3 CG_3];
      
     end

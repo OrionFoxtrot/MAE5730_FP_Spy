@@ -122,8 +122,8 @@ ff = pi/4;
 
 X0_0 = [0,10]; % x1 y1
 X0_1 = [0,10-d1,0]; %x2 y2 theta1
-X0_2 = [0,10-d1-d2,0]; %x3 y3 theta2
-X0_3 = [0,10-d1-d2-d3,0]; %x4 y4 theta3
+X0_2 = [0,10-2*d1-d2,0]; %x3 y3 theta2
+X0_3 = [0,10-2*d1-2*d2-d3,0]; %x4 y4 theta3
 
 X0_4 = [0,0]; % x1_dot y1_dot
 X0_5 = [0,0,0]; %x2 y2 theta1 _DOTS

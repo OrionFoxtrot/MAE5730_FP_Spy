@@ -23,18 +23,19 @@ plot(funx1,funy1);
 plot(funx2,funy2);
 
 axis equal
-xlim([-10 60])
-ylim([-15 15])
-xline(0);
-xline(60)
-xline(100)
-xline(140)
+xlim([-5 30])
+ylim([-10 15])
+% xline(0);
+% xline(60)
+% xline(100)
+% xline(140)
 xlabel('x')
 ylabel('y')
-
+grid on
+break_point = 0;
 for i = 1:length(t1)
-    xlim([xg_0(i)-10 xg_0(i)+10])
-    ylim([yg_0(i)-20 yg_0(i)+10])
+    % xlim([xg_0(i)-10 xg_0(i)+10])
+    % ylim([yg_0(i)-20 yg_0(i)+10])
 
     %CG_0 CG OF SLEDGE
     CG_0 = [xg_0(i), yg_0(i)];
@@ -51,24 +52,33 @@ for i = 1:length(t1)
     CG_3 = get_next_g(link2_end,ds(3)/2,t3(i));
     link3_end = get_next_g(link2_end,ds(1),t3(i));
 
-    h1 = plot(CG_0(1),CG_0(2),'o','MarkerFaceColor',[0.8500, 0.3250, 0.0980],MarkerSize=10,DisplayName='CG_0 (Sledge+Head)');
-    h2 = plot(CG_1(1),CG_1(2),'o','MarkerFaceColor',[0.4940, 0.1840, 0.5560],MarkerSize=10,DisplayName='CG_1');
-    h3 = plot(CG_2(1),CG_2(2),'o','MarkerFaceColor',[0.4660, 0.6740, 0.1880],MarkerSize=10,DisplayName='CG_2');
-    h4 = plot(CG_3(1),CG_3(2),'o','MarkerFaceColor',[0.9290, 0.6940, 0.1250],MarkerSize=10,DisplayName='CG_3 (Toes)');
+    h1 = plot(CG_0(1),CG_0(2),'o','MarkerFaceColor',[0.8500, 0.3250, 0.0980],MarkerSize=18,DisplayName='CG_0 (Sledge+Head)');
+    h2 = plot(CG_1(1),CG_1(2),'o','MarkerFaceColor',[0.4940, 0.1840, 0.5560],MarkerSize=15,DisplayName='CG_1');
+    h3 = plot(CG_2(1),CG_2(2),'o','MarkerFaceColor',[0.4660, 0.6740, 0.1880],MarkerSize=15,DisplayName='CG_2');
+    h4 = plot(CG_3(1),CG_3(2),'o','MarkerFaceColor',[0.9290, 0.6940, 0.1250],MarkerSize=15,DisplayName='CG_3 (Toes)');
 
-    h5 = plot([CG_0(1),link1_end(1)],[CG_0(2), link1_end(2)],'color','r','LineWidth',1,DisplayName='Link 1');
-    h6 = plot([link1_end(1),link2_end(1)],[link1_end(2),link2_end(2)],'color','g','LineWidth',1,DisplayName='Link 2');
-    h7 = plot([link2_end(1),link3_end(1)],[link2_end(2),link3_end(2)],'color','b','LineWidth',1, DisplayName='Link 3');
+    h5 = plot([CG_0(1),link1_end(1)],[CG_0(2), link1_end(2)],'color','r','LineWidth',2,DisplayName='Link 1');
+    h6 = plot([link1_end(1),link2_end(1)],[link1_end(2),link2_end(2)],'color','g','LineWidth',2,DisplayName='Link 2');
+    h7 = plot([link2_end(1),link3_end(1)],[link2_end(2),link3_end(2)],'color','b','LineWidth',2, DisplayName='Link 3');
+
+    if(break_point == 0)
+        text(-3,10,'$$(X_1, Y_1)$$',Interpreter='latex',FontSize=25)
+        text(-3,7.5,'$$(X_2, Y_2)$$',Interpreter='latex',FontSize=25)
+        text(-3,2.5,'$$(X_3, Y_3)$$',Interpreter='latex',FontSize=25)
+        text(-3,-2.5,'$$(X_4, Y_4)$$',Interpreter='latex',FontSize=25)
+    end
     
     legend([h1 h2 h3 h4 h5 h6 h7],Location='southeast',FontSize=20);
 
-    title(sprintf("Animation for DAE method at index %.2f",i),'FontSize', 24)
+    title(sprintf("Animation for DAE method at index %.2f",i),'FontSize', 30)
     
     pause(0.01)
     
-    % if(xg_0(i)>20)
-    %     break
-    % end
+    if(break_point>=0)
+        if(xg_0(i)>break_point)
+            break
+        end
+    end
     
     if i==length(t1)
         break

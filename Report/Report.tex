@@ -67,7 +67,7 @@ Figure 3 depicts the general free body diagram. In minimal coordinates the troll
 \subsection{Differential Algebraic System of Equations Method (DAE)}
 The setup consists of one force leading to a non-conservative force, one holonomic constraint coming from the course, and one non-holonomic constraint coming from the torque dampers. I will deal with the course's holonomic constraint by using constraint equations on the normal force interacting between the sledge and cart as well as the second derivative of the course's definition. For the torque damper, I’ll incorporate it into the angular moment balances to reduce the torque on the joints. Different sections of the course will be piece wised together. \\
 \subsubsection{Free Body Diagrams}
-To aid in the DAE method, I created free body diagrams for each of the bodies in my system. The bodies are the sledge, shown in Figure 4a, link 1, shwon in figure 4b, link 2 shown in figure 4c, and link 3 shown in figure 4d. Using these free body diagrams, I generated 11 Newton-Euler equations by performing Linear Momentum Balance (LMB) on the sledge, link 1, link 2 and link 3 in both the $\hat{i}$ and $\hat{j}$ coordinate frames along with 3 angular momentum balance (AMB) around the center of gravity's (CG) of link 1, link 2 and link 3. Along with these equations I also generated 8 constraint equations, 6 coming the constraints in the $\hat{i}$ and $\hat{j}$ in each of the three links. The last two constraints come from the holonomic constraints for the normal force which comes from the sledge interacting with the course.
+To aid in the DAE method, I created free body diagrams for each of the bodies in my system. The bodies are the sledge, shown in Figure 4a, link 1, shwon in figure 4b, link 2 shown in figure 4c, and link 3 shown in figure 4d. Using these free body diagrams, I generated 11 Newton-Euler equations by performing Linear Momentum Balance (LMB) on the sledge, link 1, link 2 and link 3 in both the $\hat{i}$ and $\hat{j}$ coordinate frames along with 3 angular momentum balance (AMB) around the center of gravity's (CG) of link 1, link 2 and link 3. Along with these equations I also generated 8 constraint equations, 6 coming the constraints in the $\hat{i}$ and $\hat{j}$ in each of the three links. The last two constraints come from the holonomic constraints for the normal force which comes from the sledge interacting with the course and the acceleration constraint of the course's double derivative.
 \begin{figure}[h]
 	\centering
 	\subfloat[\centering Sledge FBD]{{\includegraphics[width=7cm]{DAE_FBD_0} }}%
@@ -97,15 +97,15 @@ This leads to 19 unknowns, consistent with the number of equations listed above.
 	\hline
 	3&LMB in $\hat{i}$ on CG of Link 1&$-R_{x1} + R_{x2} = m_2 \ddot{x}_2$ \\
 	4&LMB in $\hat{j}$ on Link 1&$R_{y1} - R_{y2} - m_2 g = m_2 \ddot{y}_2$ \\
-	5&AMB on Link 1&$R_{x1} d_1 \cos(\theta_1) - R_{y1} d_1 \sin(\theta_1) + R_{x2} d_1 \cos(\theta_1) - R_{y2} d_1 \sin(\theta_1) - \dot{c}\dot{\theta_1}= I_{g1} \ddot{\theta}_1 $\\
+	5&AMB on Link 1&$R_{x1} d_1 \cos(\theta_1) - R_{y1} d_1 \sin(\theta_1) + R_{x2} d_1 \cos(\theta_1) - R_{y2} d_1 \sin(\theta_1) - c\dot{\theta_1}= I_{g1} \ddot{\theta}_1 $\\
 	\hline
 	6&LMB in $\hat{i}$ on Link 2&$-R_{x2} + R_{x3} = m_3 \ddot{x}_3$ \\
 	7&LMB in $\hat{j}$ on Link 2&$R_{y2} - R_{y3} - m_3 g = m_3 \ddot{y}_3$ \\
-	8&AMB on CG of Link 1&$R_{x2} d_2 \cos(\theta_2) - R_{y2} d_2 \sin(\theta_2) + R_{x3} d_2 \cos(\theta_2) - R_{y3} d_2 \sin(\theta_2) - \dot{c}\dot{\theta_2} = I_{g2} \ddot{\theta}_2 $\\
+	8&AMB on CG of Link 1&$R_{x2} d_2 \cos(\theta_2) - R_{y2} d_2 \sin(\theta_2) + R_{x3} d_2 \cos(\theta_2) - R_{y3} d_2 \sin(\theta_2) - c\dot{\theta_2} = I_{g2} \ddot{\theta}_2 $\\
 	\hline
 	9&LMB in $\hat{i}$ on Link 2&$ -R_{x3} = m_4 \ddot{x}_4$ \\
 	10&LMB in $\hat{j}$ on Link 2&$R_{y3} - m_4 g = m_4 \ddot{y}_4$ \\
-	11&AMB on CG of Link 1&$R_{x3} d_3 \cos(\theta_3) - R_{y3} d_3 \sin(\theta_3) = I_{g3} \ddot{\theta}_3 - \dot{c}\dot{\theta_3}$\\
+	11&AMB on CG of Link 1&$R_{x3} d_3 \cos(\theta_3) - R_{y3} d_3 \sin(\theta_3)- c\dot{\theta_3} = I_{g3} \ddot{\theta}_3 $\\
 	\hline
 	12&Constraint for $\hat{i}$ in link 1&$x_2 = x_1(t) + d_1 \sin(\theta_1(t))$\\
 	13&Constraint for $\hat{j}$ in link 1&$y_2 = y_1(t) - d_1 \cos(\theta_1(t))$\\
@@ -129,22 +129,22 @@ The last two equations depend on the stage of the course and varies between the 
 \end{center}
 These 19 equations are then entered into matlab and solved for each of the maximal coordinates. 
 \subsubsection{Initial Conditions}
-When entering a zipline, I felt like most people try to enter them as straight as possible. So I will also model the individual as being straight at the beginning of the course. Since the sledge is providing forcing, I will also not add any initial velocities to any of the coordinates. Further, for simulation setup, I defined each length of $d_1=d_2=d_3=5$ and the masses $m_1=30, m_2=15,m_3=5,$ and $m_4 = 2$. To further summarize the state variables used for the simulation, out of the 19 maximal coordinates, only 3 will be non-zero, this is summarized below:
+When entering a zipline, I felt like most people try to enter them as straight as possible. So I will also model the individual as being straight at the beginning of the course. Since the sledge is providing forcing, I will also not add any initial velocities to any of the coordinates. Further, for simulation setup, I defined each length of $d_1=d_2=d_3=2.5$ and the masses $m_1=30, m_2=15,m_3=5,$ and $m_4 = 2$. To further summarize the state variables used for the simulation, out of the 19 maximal coordinates, only 3 will be non-zero, this is summarized below:
 \begin{center}
 	\begin{tabular}{c|c||c|c||c|c}
 		Coordinate&Initial Condition&Coordinate&Initial Condition&Coordinate&Initial Condition\\
 		\hline
 		$x_1$&0&$y_1$&10&&\\
-		$x_2$&0&$y_2$&5&$\theta_1$&0\\
-		$x_3$&0&$y_3$&0&$\theta_2$&0\\
-		$x_4$&0&$y_4$&-5&$\theta_3$&0\\
+		$x_2$&0&$y_2$&7.5&$\theta_1$&0\\
+		$x_3$&0&$y_3$&2.5&$\theta_2$&0\\
+		$x_4$&0&$y_4$&-2.5&$\theta_3$&0\\
 	\end{tabular}
 \end{center}
 Other conditions were a forcing of $F = 100N$ and torque campers with $c = -1$.
 
 \subsection{Euler-Lagrange Method}
 \subsubsection{Constraints}
-The setup consists of one force leading to a non-conservative force, one holonomic constraint coming from the course, and one non-holonomic constraint coming from the torque dampers. I will deal with the holonomic constraint by using a Lagrange multiplier.  An example of how I deal with the trivial case of in the course where $y=-\frac{1}{10}x+16$, the holonomic constraint becomes $\dot{y}=\frac{1}{10}\dot{x}$, with the differential form being $fdt=dy-\frac{dx}{10}=0$, which leads to the Lagrange multipliers of $f_x=1$,$f_y=1$. These can then be incorporated into the equations of motion calculations.  For the torque damper, I’ll use the Raleigh dissipation equation to reduce the torque on the joints. Different sections of the course will be piece wised together. \\
+The setup consists of one force leading to a non-conservative force, one holonomic constraint coming from the course, and one non-holonomic constraint coming from the torque dampers. I will deal with the holonomic constraint by using a Lagrange multiplier.  An example of how I deal with the trivial case of in the course where $y=-\frac{1}{10}x+16$, the holonomic constraint becomes $\dot{y}=\frac{1}{10}\dot{x}$, with the differential form being $fdt=dy-\frac{dx}{10}=0$, which leads to the Lagrange multipliers of $f_x=-0.1$,$f_y=1$. These can then be incorporated into the equations of motion calculations.  For the torque damper, I’ll use the Raleigh dissipation equation to reduce the torque on the joints. Different sections of the course will be piece wised together. \\
 For each of the three stages of the course using a holonomic constraint the differential form as well as the constraint is described in the following table:
 \begin{center}
 \begin{tabular}{c|c|c|c|c}
@@ -172,8 +172,8 @@ The velocities $v1, v2, v3,$ and $v4$ can be found in the generalized coordinate
 Finally, the potential energy is defined in 3 as the heights of the center of gravity of the point mass and each link measured from the datum where $y=0$:
 \begin{equation}
 	\begin{split}
-			E_p = g ( m_1 y_1 + m_2 \left( y_1 - d_1 \cos(\theta_1) \right) + m_3 \left( y_1 - d_1 \cos(\theta_1) - d_2 \cos(\theta_2) \right) \\
-		+ m_4 \left( y_1 - d_1 \cos(\theta_1) - d_2 \cos(\theta_2) - d_3 \cos(\theta_3) \right) )	
+			E_p = g ( m_1 y_1 + m_2 \left( y_1 - d_1 \cos(\theta_1) \right) + m_3 \left( y_1 - 2d_1 \cos(\theta_1) - d_2 \cos(\theta_2) \right) \\
+		+ m_4 \left( y_1 - 2d_1 \cos(\theta_1) - 2d_2 \cos(\theta_2) - d_3 \cos(\theta_3) \right) )	
 	\end{split}
 \end{equation}
 The Lagrangian is then defined as $\mathcal{L} = E_k - E_p$. This is too long, and will not be shown here but can be inspected in the appendix 6.1.
@@ -190,26 +190,27 @@ An additional section to the Lagrangian is the Lagrangian generalized non-conser
 \end{center}
 To obtain the equations of motion the following is used for each of the conditions where in $Q_n[x]$, $n$ represents the stage of the equation and $x$ represents the index of the generalized coordinate to be used. Given that the full definitions are too long, I will only provide the generalized form with generalized coordinates substituted. For clarity, I will also substitute in the non-generalized force terms for the first course section:
 \begin{center}
-	\begin{tabular}{c|c|c}
-		Generalized Coordinate & EL equation &First Course Section\\
+	\begin{tabular}{c|c|c|c|c}
+		Generalized  & EL equation &First Course Section&Second Section&Third Section\\
+		Coordinate & & & &\\
 		\hline
-		$x_1$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{x_1}}}-\frac{\partial{\mathcal{L}}}{\partial{x_1}}=Q_n[1]$&$Q_1[1] = 100 - \frac{1}{5} \left( \frac{x_1}{10} - 3 \right) \lambda$\\
-		$y_1$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{y_1}}}-\frac{\partial{\mathcal{L}}}{\partial{y_1}}=Q_n[2]$&$Q_1[2] = \lambda$\\
-		$\theta_1$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{\theta_1}}}-\frac{\partial{\mathcal{L}}}{\partial{\theta_1}}=Q_n[3]$ & $Q_1[3] = c\theta_1$	\\		
-		$\theta_2$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{\theta_2}}}-\frac{\partial{\mathcal{L}}}{\partial{\theta_2}}=Q_n[4]$& $Q_1[4] = c\theta_2$	\\
-		$\theta_3$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{\theta_3}}}-\frac{\partial{\mathcal{L}}}{\partial{\theta_3}}=Q_n[5]$& $Q_1[5] = c\theta_3$	\\
+		$x_1$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{x_1}}}-\frac{\partial{\mathcal{L}}}{\partial{x_1}}=Q_n[1]$&$Q_1[1] = 100 - \frac{1}{5} \left( \frac{x_1}{10} - 3 \right) \lambda$&$Q_2[1] =100-\frac{1}{10} \lambda$&$Q_3[1] =-(\frac{x}{10}-12)^2+10$\\
+		$y_1$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{y_1}}}-\frac{\partial{\mathcal{L}}}{\partial{y_1}}=Q_n[2]$&$Q_1[2] = \lambda$&$Q_2[2] = \lambda$&$Q_3[2] = \lambda$\\
+		$\theta_1$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{\theta_1}}}-\frac{\partial{\mathcal{L}}}{\partial{\theta_1}}=Q_n[3]$ & $Q_1[3] = c\theta_1$&$Q_2[3] = c\theta_1$&$Q_3[3] = c\theta_1$	\\		
+		$\theta_2$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{\theta_2}}}-\frac{\partial{\mathcal{L}}}{\partial{\theta_2}}=Q_n[4]$& $Q_1[4] = c\theta_2$& $Q_2[4] = c\theta_2$& $Q_3[4] = c\theta_2$	\\
+		$\theta_3$ & $\frac{d}{dt}\frac{\partial{\mathcal{L}}}{\partial{\dot{\theta_3}}}-\frac{\partial{\mathcal{L}}}{\partial{\theta_3}}=Q_n[5]$& $Q_1[5] = c\theta_3$& $Q_2[5] = c\theta_3$& $Q_3[5] = c\theta_3$	\\
 	\end{tabular}
 \end{center}
-For my implementation I used the Jacobian representation to calculate the equations of motion and saved them to functions in matlab. I used the following equation found in class to simultaniously solve for the equations of motion:
+For my implementation I used the Jacobian representation to calculate the equations of motion and saved them to functions in matlab. I used the following equation found in class to simultaneously solve for the equations of motion:
 \[
 \text{Equations of Motion} \;=\; J\bigl(J(\mathcal{L},\dot{q}),\dot{q}\bigr)\,\ddot{q} 
 \;+\; J\bigl(J(\mathcal{L},\dot{q}),q\bigr)\,\dot{q} 
 \;-\; \frac{d}{dt}\bigl(J(\mathcal{L},q)\bigr) 
 \;=\; Q.
 \]
-Where $q$ is the vector of generalized coorrdinates, $\dot{q}$, is the first derivative of the generalized coordinates and $\ddot{q}$ is the second derivative of the generalized coordinates. $\mathcal{L}$, is the Lagrangian as found in Appendix 6.1 and $J(a,b)$ is the Jacobian of function $a$, with respect to $b$.
+Where $q$ is the vector of generalized coordinates, $\dot{q}$, is the first derivative of the generalized coordinates and $\ddot{q}$ is the second derivative of the generalized coordinates. $\mathcal{L}$, is the Lagrangian as found in Appendix 6.1 and $J(a,b)$ is the Jacobian of function $a$, with respect to $b$. Q is the non-conservative generalized force terms. This representation uses the matrix definition for each of the 
 \subsubsection{Initial Conditions}
-Following the same rules as dictates in the DAE method analysis section 2.1.3, the EL equations will follow a similar basis where the individual is connected to the course in a vertical setup. Similarly, for simulation setup, I defined each length of $d_1=d_2=d_3=5$ and the masses $m_1=30, m_2=15,m_3=5,$ and $m_4=2$. For the state variables used in the minimal coordinates version of this problem the initial conditions for the velocities are all 0 and the positions for the EL method is:
+Following the same rules as dictates in the DAE method analysis section 2.1.3, the EL equations will follow a similar basis where the individual is connected to the course in a vertical setup. Similarly, for simulation setup, I defined each length of $d_1=d_2=d_3=2.5$ and the masses $m_1=30, m_2=15,m_3=5,$ and $m_4=2$. For the state variables used in the minimal coordinates version of this problem the initial conditions for the velocities are all 0 and the positions for the EL method is:
 \begin{center}
 	\begin{tabular}{c|c}
 		Coordinate&Initial Condition\\
@@ -224,7 +225,7 @@ Following the same rules as dictates in the DAE method analysis section 2.1.3, t
 Other conditions were a constant forcing of $F = 100N$ and torque campers with $c = -1$.
 \newpage
 \section{Still Frames}
-Figure's 5 and 6 illustrate still frames taken from two sections of the course, where figure a refers to a frame from the DAE method and figures b refer to a frame from the EL method. Figure 5 comes from the start of the section of the course where $x = 0$ along the function $(\frac{x}{10}-3)^2+16$, while figure 6 comes from an earlier section of the course where $x=20$ along the same function. The initial conditions for all cases I tested started with the human swinging off the sledge (red) being completely upright, with the values $\theta_1 = \theta_2 = \theta_3=0$ No initial forcing is present except for the forcing of the sledge. The forcing of the sledge is variable between each of the stages but for the following simulations all course stages had the same forcing at $F = 100N$.
+Figure's 5 and 6 illustrate still frames taken from two sections of the course, where figure a refers to a frame from the DAE method and figures b refer to a frame from the EL method. Figure 5 comes from the start of the section of the course where $x = 0$ along the function $(\frac{x}{10}-3)^2+16$, while figure 6 comes from an earlier section of the course where $x=20$ along the same function. The initial conditions for all cases I tested started with the human swinging off the sledge (orange) being completely upright, with the values $\theta_1 = \theta_2 = \theta_3=0$ No initial forcing is present except for the forcing of the sledge. The forcing of the sledge is variable between each of the stages but for the following simulations all course stages had the same forcing at $F = 100N$.
 
 \begin{center}
 	\begin{figure}[H]
@@ -270,7 +271,7 @@ The EL approach, while easier to develop the basic equations of motion through e
 
 One notable finding was the impact of forcing on the system’s stability and traversal time. Higher forces accelerated the spy along the course but also increased the likelihood of link looping, particularly in tighter curves. Adjusting the forcing function for each section of the course could mitigate these issues, ensuring a balance between speed and stability. This presents a clear area for optimization in future iterations of the model.
 
-The transition points between course segments also highlighted the limitations of the current setup. The problem with the current setup is that at the boundary conditions where the course changes, the final state that the system is in from the previous state did not follow the constraints of the next section. This required altering of the state variables so that the final state from the previous section obeyed the next sections constraints. Discussing the other constraints in the system I think while they were sufficient for this project, incorporating additional factors, such as cable elasticity or environmental effects, would enhance the realism of the simulation. Furthermore, refining the damping properties of the joints to better represent human-like motion could offer deeper insights into the dynamics of the system.
+The transition points between course segments also highlighted the limitations of the current setup. The problem with the current setup is that at the boundary conditions where the course changes, the final state that the system is in from the previous state does not follow the constraints of the next section. This required altering of the state variables so that the final state from the previous section obeyed the next sections constraints. In reality, it's likely a impulsive force would act on the sledge to "knock" it into the next course segment. I did not have time to model this so I decided to directly alter the state variables. In reality, when designing the sledge for real world applications, its likely that this is where the most force will be applied to the drive system, and you would have to make sure it is able to survive that force. Discussing the other constraints in the system I think while they were sufficient for this project, incorporating additional factors, such as cable elasticity or environmental effects, would enhance the realism of the simulation. Furthermore, refining the damping properties of the joints to better represent human-like motion could offer deeper insights into the dynamics of the system. I pretty much chose the torque damper value arbitrarily, but in reality, I do feel that my joints would be able to oppose more than $1N$ of force. 
 
 A discussion about the trajectory plots, the DAE and EL methods differ in their trajectories. While at the beginning, the motion closely matches each other, there seems to be differences towards the later section of the course. This interestingly only occurred when I added the torque dampers and signifies there may be a issue with my implementation. However, even then, the current setup seems to match up closely with each other if you inspect only the general shapes the trajectory takes. For example in the middle section there exist two peaks before a third peak occurs in the last section. This is present in both of the trajectory plots and indicates that the bug perhaps is minor. 
 
