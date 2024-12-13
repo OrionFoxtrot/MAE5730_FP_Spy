@@ -1,3 +1,5 @@
+%% Equations of Motion Generation
+
 clear; clc;
 function gen = generate_matrix(stage)
     syms x1 y1 theta1 x2 y2 theta2 x3 y3 theta3 x4 y4 real
@@ -92,13 +94,13 @@ function gen = generate_matrix(stage)
 
 end
 
-generate_matrix(2)
+generate_matrix(2) % Generate Matrix for course section 3. (This uses standard programming indexing)
 %% Complete Matrix Generation
 generate_matrix(0);
 generate_matrix(1);
 generate_matrix(2);
 disp('generation complete')
-%%
+%% Simulation Block
 
 clear; clc;
 addpath("DAE_Matrix\")

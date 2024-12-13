@@ -1,7 +1,6 @@
-
+%% Equations of Motion Generation
 clear
 clc
-% L
 function gen = generate_equations(stage)
     syms xg yg theta1 theta2 theta3 d1 d2 d3 m1 m2 m3 m4 g real
     syms xg_dot yg_dot theta1_dot theta2_dot theta3_dot real
@@ -105,19 +104,20 @@ function gen = generate_equations(stage)
     matlabFunction(lam_sol,'File',v2)
 end
 
-%single generation
-generate_equations(0)
 
-%% Course Generation
+generate_equations(0) % Generate Matrix for course section 1. (This uses standard programming indexing)
+
+%% Complete Course Generation
 clear; clc;
 generate_equations(0)
 generate_equations(1)
 generate_equations(2)
 disp('generation complete')
-%%
+%% Simulation Block
 clear; clc;
 addpath("EL_Eqs\");
 
+% Consstants
 m1 = 30;
 m2 = 15;
 m3 = 5;
@@ -131,11 +131,13 @@ G = 9.81;
 
 c=-1; %Should be Neg
 
+% IC's
 ff = pi/4;
-X0_0 = [0, 10, 0,0,0];
+X0_0 = [0, 10, 0,0,0]; %xg, yg, theta1, theta2, theta_3
 X0_1 = [0,0,0,0,0]; %xg_dot yg_dot, theta1_dot, theta2_dot, theta3_dot
 X0 = [X0_0, X0_1];
 
+% Simulation wide ODE45.
 
 %Stage 0 => y = (x/10-3)^2+1
 F = 100;
